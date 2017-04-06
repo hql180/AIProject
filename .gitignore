@@ -18,9 +18,10 @@
 x64/
 x86/
 bld/
-[Bb]in/
 [Oo]bj/
 [Ll]og/
+
+!**/[Bb]in/**
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -250,3 +251,6 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+#special files
+FBXLoader_d.lib
