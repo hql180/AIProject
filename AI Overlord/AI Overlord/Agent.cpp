@@ -112,3 +112,4 @@ void Agent::update(std::vector<Agent*> agentList)
 		// update/perform action
 	}
 }
+

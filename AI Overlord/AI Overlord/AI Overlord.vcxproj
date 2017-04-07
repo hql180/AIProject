@@ -156,7 +156,9 @@
     <ClInclude Include="Action.h" />
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AIOverlord.h" />
+    <ClInclude Include="Attack.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="PathGraph.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -165,7 +167,9 @@
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="AI Overlord.cpp" />
     <ClCompile Include="AIOverlord.cpp" />
+    <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="PathGraph.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
