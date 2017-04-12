@@ -54,6 +54,9 @@
     <ClInclude Include="PathGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PathFinder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -78,6 +81,9 @@
       <Filter>Source Files\Actions\Attacks</Filter>
     </ClCompile>
     <ClCompile Include="PathGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
