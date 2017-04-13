@@ -26,6 +26,10 @@ void Attack::enter(Agent * agent)
 	agent->setAttackTarget(m_targetAgent);
 }
 
+void Attack::exit(Agent * agent)
+{
+}
+
 void Attack::updateAction(Agent * agent)
 {
 	float bestScore = 0;

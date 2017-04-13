@@ -113,3 +113,32 @@ void Agent::update(std::vector<Agent*> agentList)
 	}
 }
 
+float Agent::getCurrentHealth()
+{
+	return 0.0f;
+}
+
+float Agent::getHealthPercentage()
+{
+	return 0.0f;
+}
+
+float Agent::getAttackDamage()
+{
+	return 0.0f;
+}
+
+float Agent::getManaPercentage()
+{
+	return 0.0f;
+}
+
+void Agent::setAttackTarget(Agent * agent)
+{
+}
+
+std::vector<Action> Agent::getAttackList()
+{
+	return std::vector<Action>();
+}
+

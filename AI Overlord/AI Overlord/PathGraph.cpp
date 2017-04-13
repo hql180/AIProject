@@ -7,6 +7,10 @@ PathGraph::PathGraph()
 
 PathGraph::~PathGraph()
 {
+	for (auto& node : m_nodeList)
+	{
+		delete node;
+	}
 }
 
 Node * PathGraph::addNode(glm::vec3 position)
@@ -19,7 +23,7 @@ Node * PathGraph::addNode(glm::vec3 position)
 
 void PathGraph::addConnection(Node * src, Node * dest, float cost)
 {
-	src->connections.push_back(Path::Edge(dest, glm::length(src - dest)));
+	src->connections.push_back(Path::Edge(dest, glm::length(src->position - dest->position)));
 }
 
 void PathGraph::getNodesInRadius(std::vector<Node*>& outNodes, glm::vec3 pos, float radius)
@@ -68,4 +72,9 @@ void PathGraph::removeNodeAt(glm::vec3 pos, float radius)
 			}
 		}
 	}
+}
+
+std::vector<Node*>& PathGraph::getNodeList()
+{
+	return m_nodeList;
 }

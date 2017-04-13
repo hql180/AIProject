@@ -3,6 +3,8 @@
 #include "glm.hpp"
 #include "Camera.h"
 
+class PathGraph;
+
 class AIOverlord : public aie::Application
 {
 public:
@@ -21,6 +23,11 @@ private:
 	glm::mat4 m_viewMatrix;
 
 	float m_windowWidth, m_windowHeight;
+
+	PathGraph* m_pathGraph;
+
+	glm::vec3 m_testGizmo;
+	glm::vec3 m_chaseGizmo;
 
 };
 

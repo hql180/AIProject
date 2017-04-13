@@ -3,25 +3,27 @@
 #include <vector>
 #include "glm.hpp"
 
-struct Edge;
+
 
 namespace Path
 {
+	struct Edge;
+
 	struct Node
 	{
 		glm::vec3 position;
 
-		float gScore;
+		//float gScore;
 
-		Node* parent;
+		//Node* parent;
 
 		std::vector<Edge> connections;
 
-		Node() : position(0.0f), gScore(0), parent(nullptr) {}
+		Node() : position(0.0f)  {} //parent(nullptr) gScore(0)
 
 		Node(glm::vec3 pos) : position(pos) {}
 
-		Node(glm::vec3 pos, float score, Node* pParent) : position(pos), gScore(score), parent(pParent) {}
+		//Node(glm::vec3 pos, float score, Node* pParent) : position(pos), gScore(score), parent(pParent) {}
 	};
 
 	struct Edge
@@ -61,7 +63,9 @@ public:
 	Node* findNode(glm::vec3 pos, float radius);
 
 	// Removes node at given pos or removes nodes within radius of postion
-	void removeNodeAt(glm::vec3 pos, float radius = 0.0f);	
+	void removeNodeAt(glm::vec3 pos, float radius = 0.0f);
+
+	std::vector<Node*>& getNodeList();
 
 private:
 	std::vector<Node*> m_nodeList;

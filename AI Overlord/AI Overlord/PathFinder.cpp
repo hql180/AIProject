@@ -32,25 +32,64 @@ void PathFinder::aStar(Path::Node * startNode, Path::Node * endNode, std::list<P
 		closedList.push_front(current);
 		openList.pop_front();
 
-		for (auto const& edgeConnection : current->pNode->connections)
+		for (auto& edgeConnection : current->pNode->connections)
 		{
 			bool isAdded = false;
 
 			float gScore = current->gScore + edgeConnection.cost;
 
-			for (auto& node : closedList)
+			for (auto& closedNode : closedList)
 			{
-				if (node->pNode == edgeConnection.connectedNode)
+				if (closedNode->pNode == edgeConnection.connectedNode)
 				{
 					isAdded = true;
-					if (node->gScore > gScore)
+					if (closedNode->gScore > gScore)
 					{
-						node->gScore = gScore;
-						node->fScore = node->gScore + node->hScore;
-						node->pParent = current;
+						closedNode->gScore = gScore;
+						closedNode->fScore = closedNode->gScore + closedNode->hScore;
+						closedNode->pParent = current;
 					}
 				}
 			}
+
+			for (auto& openNode : openList)
+			{
+				if (openNode->pNode == edgeConnection.connectedNode)
+				{
+					isAdded = true;
+					if (openNode->gScore > gScore)
+					{
+						openNode->gScore = gScore;
+						openNode->fScore = openNode->gScore + openNode->hScore;
+						openNode->pParent = current;
+					}
+				}
+			}
+
+			if (!isAdded)
+			{
+				openList.push_front(new Node(edgeConnection.connectedNode));
+				openList.front()->gScore = current->gScore + edgeConnection.cost;
+				openList.front()->hScore = glm::length(openList.front()->pNode->position - endNode->position);
+				openList.front()->fScore = openList.front()->gScore + openList.front()->hScore;
+				openList.front()->pParent = current;
+			}
+
 		}
 	}
+
+	if (current->pNode == endNode)
+	{
+		while (current)
+		{
+			outPath.push_front(current->pNode);
+			current = current->pParent;
+		}
+	}
+
+	for (auto& node : openList)
+		delete node;
+
+	for (auto& node : closedList)
+		delete node;
 }
