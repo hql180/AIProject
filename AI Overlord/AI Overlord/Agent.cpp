@@ -3,7 +3,7 @@
 #include <set>
 #include <algorithm>
 
-Agent::Agent()
+Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f)
 {
 }
 
@@ -80,7 +80,7 @@ Action* Agent::getBestAction()
 	return nullptr;
 }
 
-void Agent::update(std::vector<Agent*> agentList)
+void Agent::update(std::vector<Agent*> agentList, float dt)
 {
 	// loops through all other agents
 	for (auto& agent : agentList)
@@ -107,9 +107,15 @@ void Agent::update(std::vector<Agent*> agentList)
 
 	m_currentAction = getBestAction();
 
+	for (auto& attack : m_attackList)
+	{
+		attack.updateTimer(dt);
+	}
+
+	
 	if (m_currentAction)
 	{
-		// update/perform action
+		m_currentAction->updateAction(this);
 	}
 }
 
@@ -128,13 +134,63 @@ float Agent::getAttackDamage()
 	return 0.0f;
 }
 
+void Agent::subMana(float amount)
+{
+	m_mana -= amount;
+}
+
+float Agent::getCurrentMana()
+{
+	return m_mana;
+}
+
 float Agent::getManaPercentage()
+{
+	return m_mana/m_maxMana;
+}
+
+float Agent::getDistanceToTarget()
+{
+	return m_distanceToTarget;
+}
+
+void Agent::checkDistanceToTarget()
+{
+	if (m_currentTarget)
+	{
+		m_distanceToTarget = glm::length(m_postion - m_currentTarget->getPostion());
+	}
+}
+
+float Agent::getMoveSpeed()
 {
 	return 0.0f;
 }
 
+void Agent::setCurrentAction(Action * action)
+{
+	m_currentAction = action;
+}
+
 void Agent::setAttackTarget(Agent * agent)
 {
+	m_currentTarget = agent;
+}
+
+bool Agent::takeDamage(float damage)
+{
+	m_health -= damage;
+	return (m_health <= 0) ? true : false;
+}
+
+Agent * Agent::getAttackTarget()
+{
+	return m_currentTarget;
+}
+
+Action * Agent::getEngage()
+{
+	return &m_hostileActions.front();
 }
 
 std::vector<Action> Agent::getAttackList()

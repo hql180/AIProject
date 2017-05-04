@@ -1,8 +1,9 @@
 #include "Attack.h"
 #include "Agent.h"
 
+#include <algorithm>
 
-Attack::Attack(Agent * agent) : m_targetAgent(agent)
+Attack::Attack()
 {
 }
 
@@ -10,40 +11,56 @@ Attack::~Attack()
 {
 }
 
-float Attack::evaluate(Agent * agent)
+float Attack::evaluate(Agent * agent, float dt)
 {
-	float score = 0;
-
-	score += ((agent->getHealthPercentage() / (m_targetAgent->getHealthPercentage() + 0.01f))
-		* (agent->getAttackDamage() / (m_targetAgent->getCurrentHealth() + 0.01f))
-		+ (agent->getManaPercentage() / 3)); // arbitary 3 placeholder value
-
-	return score;
+	return 0.0f;
 }
 
-void Attack::enter(Agent * agent)
+void Attack::enter(Agent* agent, float dt)
 {
-	agent->setAttackTarget(m_targetAgent);
+
 }
 
-void Attack::exit(Agent * agent)
+void Attack::exit(Agent* agent, float dt)
 {
 }
 
-void Attack::updateAction(Agent * agent)
+void Attack::updateAction(Agent* agent, float dt)
 {
-	float bestScore = 0;
-	Action* bestAction = nullptr;
-	
-	for (auto& action : agent->getAttackList())
-	{
-		float score = action.evaluate(agent);
-		if (score > bestScore)
-		{
-			bestScore = score;
-			bestAction = &action;
-		}
-	}
 
-	bestAction->enter(agent);
+}
+
+void Attack::updateTimer(float dt)
+{
+	if (m_CDTimer > 0)
+		m_CDTimer -= dt;
+
+	if (m_CDTimer < 0)
+		m_CDTimer = 0;
+}
+
+void Attack::applyDamage(Agent* agent)
+{
+	agent->subMana(m_cost);
+	agent->getAttackTarget()->takeDamage(m_damageMultiplier * agent->getAttackDamage());
+	m_castTimer = 0;
+	m_CDTimer = m_coolDown;
+}
+
+float Attack::checkCoolDown(Agent* agent)
+{
+	//return	std::min((agent->getDistanceToTarget() / (agent->getMoveSpeed()) / (m_CDTimer + 0.01f)), 1.0f);
+	return (m_CDTimer <= 0);
+}
+
+float Attack::checkMana(Agent * agent)
+{
+	//return (agent->getCurrentMana >= m_cost) ? 1.0f : agent->getCurrentMana / m_cost;
+	return (agent->getCurrentMana() >= m_cost);
+}
+
+float Attack::checkDPS(Agent * agent)
+{
+	float damage = agent->getAttackDamage() * m_damageMultiplier;
+	return (m_castTime >= 1) ? damage / m_castTime : damage * m_castTime;
 }

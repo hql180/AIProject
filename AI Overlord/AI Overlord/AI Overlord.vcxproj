@@ -161,7 +161,9 @@
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AIOverlord.h" />
     <ClInclude Include="Attack.h" />
+    <ClInclude Include="BasicMelee.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Engage.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PathGraph.h" />
     <ClInclude Include="stdafx.h" />
@@ -170,6 +172,8 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Agent.cpp" />
+    <ClCompile Include="BasicMelee.cpp" />
+    <ClCompile Include="Engage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="AIOverlord.cpp" />
     <ClCompile Include="Attack.cpp" />

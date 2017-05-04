@@ -5,17 +5,33 @@
 class Attack : public Action
 {
 public:
-	Attack(Agent* agent);
+	Attack();
 	~Attack();
 
-	// Agent here is the attacker
-	virtual float evaluate(Agent* agent);
-	virtual void enter(Agent* agent);
-	virtual void exit(Agent* agent);
-	virtual void updateAction(Agent* agent);
+	
+	virtual float evaluate(Agent* agent, float dt);
+	virtual void enter(Agent* agent, float dt);
+	virtual void exit(Agent* agent, float dt);
+	virtual void updateAction(Agent* agent, float dt);
+
+	void updateTimer(float dt);
+
+	void applyDamage(Agent* agent);
 
 protected:
-	// Pointer to agent this attack action is placed on
-	Agent* m_targetAgent;
+	float m_cost;
+	float m_attackRange;
+	float m_damageMultiplier;
+	float m_coolDown;
+	float m_CDTimer;
+	float m_castTime;
+	float m_castTimer;
+
+	//Action* 
+
+	float checkCoolDown(Agent* agent);
+	float checkMana(Agent* agent);
+	float checkDPS(Agent* agent);
+
 };
 
