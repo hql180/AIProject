@@ -36,9 +36,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIOverlord.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Agent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -58,17 +55,26 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BasicMelee.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Actions\Attacks</Filter>
     </ClInclude>
     <ClInclude Include="Engage.h">
+      <Filter>Header Files\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="AIApplication.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Move.h">
+      <Filter>Header Files\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Wander.h">
+      <Filter>Header Files\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Seek.h">
+      <Filter>Header Files\Actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AIOverlord.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Agent.cpp">
@@ -93,9 +99,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BasicMelee.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Actions\Attacks</Filter>
     </ClCompile>
     <ClCompile Include="Engage.cpp">
+      <Filter>Source Files\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="AIApplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Move.cpp">
+      <Filter>Source Files\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Wander.cpp">
+      <Filter>Source Files\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Seek.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

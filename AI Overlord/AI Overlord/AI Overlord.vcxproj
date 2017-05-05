@@ -159,15 +159,18 @@
   <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Agent.h" />
-    <ClInclude Include="AIOverlord.h" />
+    <ClInclude Include="AIApplication.h" />
     <ClInclude Include="Attack.h" />
     <ClInclude Include="BasicMelee.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Engage.h" />
+    <ClInclude Include="Move.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PathGraph.h" />
+    <ClInclude Include="Seek.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Wander.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
@@ -175,12 +178,15 @@
     <ClCompile Include="BasicMelee.cpp" />
     <ClCompile Include="Engage.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="AIOverlord.cpp" />
+    <ClCompile Include="AIApplication.cpp" />
     <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Move.cpp" />
     <ClCompile Include="PathFinder.cpp" />
     <ClCompile Include="PathGraph.cpp" />
+    <ClCompile Include="Seek.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Wander.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

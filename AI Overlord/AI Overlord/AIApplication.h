@@ -2,14 +2,16 @@
 #include "Application.h"
 #include "glm.hpp"
 #include "Camera.h"
+#include <vector>
 
 class PathGraph;
+class Agent;
 
-class AIOverlord : public aie::Application
+class AIApplication : public aie::Application
 {
 public:
-	AIOverlord();
-	virtual ~AIOverlord();
+	AIApplication();
+	virtual ~AIApplication();
 
 	virtual bool startup();
 	virtual void shutdown();
@@ -28,6 +30,8 @@ private:
 
 	glm::vec3 m_testGizmo;
 	glm::vec3 m_chaseGizmo;
+	
+	std::vector<Agent*> m_agents;
 
 };
 

@@ -32,7 +32,7 @@ void BasicMelee::enter(Agent* agent, float dt)
 
 void BasicMelee::exit(Agent* agent, float dt)
 {
-	agent->setCurrentAction(agent->getEngage());
+	agent->setCurrentAction(agent->getAttackTarget()->getEngage());
 }
 
 void BasicMelee::updateAction(Agent* agent, float dt)
@@ -46,4 +46,9 @@ void BasicMelee::updateAction(Agent* agent, float dt)
 			exit(agent, dt);
 		}
 	}
+}
+
+void BasicMelee::updateTimer(float dt)
+{
+	Attack::updateTimer(dt);
 }

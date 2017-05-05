@@ -2,11 +2,4 @@
 
 
 
-Action::Action()
-{
-}
 
-
-Action::~Action()
-{
-}

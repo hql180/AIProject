@@ -7,6 +7,11 @@ Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(
 {
 }
 
+Agent::Agent(glm::vec3 & pos, PathGraph* graph, glm::vec4& colour) : m_postion(pos), m_pathGraph(graph), m_colour(colour), m_velocity(0), m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f), m_moveSpeed(5.f)
+{
+
+}
+
 
 Agent::~Agent()
 {
@@ -15,6 +20,11 @@ Agent::~Agent()
 glm::vec3 Agent::getPostion()
 {
 	return m_postion;
+}
+
+void Agent::setPosition(glm::vec3& position)
+{
+	m_postion = position;
 }
 
 bool Agent::contains(std::vector<Agent*> list, Agent * agent)
@@ -31,19 +41,23 @@ bool Agent::inVisionRange(Agent * agent)
 	return false;
 }
 
-Action* Agent::getBestAction()
+Action* Agent::getBestAction(float dt)
 {
+	if (m_currentAction == nullptr)
+	{
+		m_currentActionScore = 0;
+	}
+
 	Action* bestAction = nullptr;
-	float bestScore;
+	float bestScore = 0;
 	
 	// First loop through selfactions and evaluate score
 	for (auto& action : m_actions)
-	{
-		action.evaluate(&(*this));
-		float score = 0;
+	{		
+		float score = action->evaluate(this, dt);
 		if (score > bestScore)
 		{
-			// set best action
+			bestAction = action;
 			bestScore = score;
 		}
 	}
@@ -52,32 +66,32 @@ Action* Agent::getBestAction()
 	for (auto& target : m_actionableHostiles)
 	{
 		for (auto& action : target->m_hostileActions)
-		{
-			action.evaluate(&(*this));
-			float score = 0;
+		{			
+			float score = action->evaluate(this, dt);
 			if (score > bestScore)
 			{
-				// set best action
+				bestAction = action;
 				bestScore = score;
 			}
 		}		
 	}
 
-	if (bestScore > m_currentActionScore || m_currentAction == nullptr)
+	if (bestScore > m_currentActionScore)
 	{
 		if (bestAction != m_currentAction)
 		{
+			if (m_currentAction != nullptr)
+			{				
+				m_currentAction->exit(this, dt);
+			}
 			m_currentActionScore = bestScore;
 			m_currentActionScore *= 1.05f;
-			return bestAction;
+			bestAction->enter(this, dt);
 		}
-		else
-		{
-			return m_currentAction;
-		}
+		return bestAction;
 	}
 
-	return nullptr;
+	return m_currentAction;
 }
 
 void Agent::update(std::vector<Agent*> agentList, float dt)
@@ -85,14 +99,14 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 	// loops through all other agents
 	for (auto& agent : agentList)
 	{
-		if (agent != this && inVisionRange(agent))
+		if (agent != this) //  && inVisionRange(agent)
 		{
 			if (!contains(m_actionableHostiles, agent))
 			{
 				m_actionableHostiles.push_back(agent);
 			}
 		}
-	}
+	}	
 
 	for (int i = m_actionableHostiles.size() - 1; i > 0; --i)
 	{
@@ -104,34 +118,34 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 		}
 	}
 
+	m_currentAction = getBestAction(dt);
 
-	m_currentAction = getBestAction();
-
-	for (auto& attack : m_attackList)
+	for (auto& attack : m_targetedActions)
 	{
-		attack.updateTimer(dt);
+		attack->updateTimer(dt);
 	}
 
+	//m_velocity = m_velocity * (0.80f);
 	
 	if (m_currentAction)
 	{
-		m_currentAction->updateAction(this);
+		m_currentAction->updateAction(this, dt);
 	}
 }
 
 float Agent::getCurrentHealth()
 {
-	return 0.0f;
+	return m_health;
 }
 
 float Agent::getHealthPercentage()
 {
-	return 0.0f;
+	return m_health/(m_maxHealth);
 }
 
 float Agent::getAttackDamage()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 void Agent::subMana(float amount)
@@ -164,7 +178,14 @@ void Agent::checkDistanceToTarget()
 
 float Agent::getMoveSpeed()
 {
-	return 0.0f;
+	return m_moveSpeed;
+}
+
+void Agent::updateMovement(float dt)
+{
+	if (glm::length(m_velocity) > m_moveSpeed)
+		m_velocity = glm::normalize(m_velocity) * m_moveSpeed;
+	m_postion = m_postion + m_velocity * dt;
 }
 
 void Agent::setCurrentAction(Action * action)
@@ -183,6 +204,16 @@ bool Agent::takeDamage(float damage)
 	return (m_health <= 0) ? true : false;
 }
 
+glm::vec3 Agent::getVelocity()
+{
+	return m_velocity;
+}
+
+void Agent::setVelocity(glm::vec3& targetVelocity)
+{
+	m_velocity = targetVelocity;
+}
+
 Agent * Agent::getAttackTarget()
 {
 	return m_currentTarget;
@@ -190,11 +221,31 @@ Agent * Agent::getAttackTarget()
 
 Action * Agent::getEngage()
 {
-	return &m_hostileActions.front();
+	return m_hostileActions.front();
 }
 
-std::vector<Action> Agent::getAttackList()
+PathGraph * Agent::getPathGraph()
 {
-	return std::vector<Action>();
+	return m_pathGraph;
+}
+
+std::vector<Action*>& Agent::getHActions()
+{
+	return m_hostileActions;
+}
+
+std::vector<Action*>& Agent::getTActions()
+{
+	return m_targetedActions;
+}
+
+std::vector<Action*>& Agent::getActions()
+{
+	return m_actions;
+}
+
+glm::vec4 & Agent::getColour()
+{
+	return m_colour;
 }
 

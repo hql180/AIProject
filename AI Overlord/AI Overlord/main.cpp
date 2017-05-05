@@ -1,11 +1,11 @@
-#include "AIOverlord.h"
+#include "AIApplication.h"
 
 
 
 
 int main()
 {
-	auto app = new AIOverlord();
+	auto app = new AIApplication();
 	app->run("AIE", 1280, 720, false);
 	delete app;
 

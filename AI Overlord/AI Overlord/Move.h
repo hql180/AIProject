@@ -1,16 +1,15 @@
 #pragma once
 #include "Action.h"
+#include "PathGraph.h"
+#include <list>
 
-// Engage is attached to agents being attacked 
-class Engage :
+class Move :
 	public Action
 {
 public:
-	Engage();
-	Engage(Agent* agent);
-	~Engage();
+	Move();
+	~Move();
 
-	// Agent here is the attacker
 	virtual float evaluate(Agent* agent, float dt);
 	virtual void enter(Agent* agent, float dt);
 	virtual void exit(Agent* agent, float dt);
@@ -18,8 +17,10 @@ public:
 	virtual void updateTimer(float dt);
 
 protected:
-	// Pointer to agent being attacked
-	Agent* m_targetAgent;
+	void generatePath(Agent* agent, glm::vec3& destination);
 
+	void followPath(Agent* agent, float dt);
+
+	std::list<Node*> m_currentPath;
 };
 
