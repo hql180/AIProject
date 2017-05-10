@@ -29,6 +29,8 @@ public:
 
 	bool inVisionRange(Agent* agent);
 
+	bool inLineOfSight(Agent* target);
+
 	Action* getBestAction(float dt); 
 
 	void update(std::vector<Agent*> agentList, float dt);
@@ -49,13 +51,15 @@ public:
 
 	void checkDistanceToTarget();
 
+	float getAngleToTarget(Agent* target);
+
 	float getMoveSpeed();
 
 	void updateMovement(float dt);
 
 	void setCurrentAction(Action* action);
 
-	void setAttackTarget(Agent* agent);
+	void setTarget(Agent* agent);
 
 	bool takeDamage(float damage);
 
@@ -63,7 +67,7 @@ public:
 
 	void setVelocity(glm::vec3& targetVelocity);
 
-	Agent* getAttackTarget();
+	Agent* getTarget();
 
 	//temporary fix
 	Action* getEngage();
@@ -95,7 +99,7 @@ protected:
 
 	float m_minSkillRange, m_maxSkillRange;
 
-	float m_visionRange;
+	float m_visionRange, m_FOV;
 
 	float m_actionCD;
 

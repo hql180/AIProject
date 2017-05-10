@@ -17,7 +17,24 @@ Engage::~Engage()
 
 float Engage::evaluate(Agent* agent, float dt)
 {
-	float score = 0;
+	agent->setTarget(m_targetAgent);
+
+	float bestScore = 0;
+	Action* bestAction = nullptr;
+	agent->checkDistanceToTarget();
+
+	for (auto& action : agent->getTActions())
+	{
+		float score = action->evaluate(agent, dt);
+		if (score > bestScore)
+		{
+			bestScore = score;
+			bestAction = action;
+		}
+	}
+
+	if (bestAction)
+		bestAction->enter(agent, dt);
 
 	//score += ((agent->getHealthPercentage() / (m_targetAgent->getHealthPercentage() + 0.01f))
 	//	* (agent->getAttackDamage() / (m_targetAgent->getCurrentHealth() + 0.01f))
@@ -29,13 +46,13 @@ float Engage::evaluate(Agent* agent, float dt)
 
 void Engage::enter(Agent* agent, float dt)
 {
-	agent->setAttackTarget(m_targetAgent);	
+	agent->setTarget(m_targetAgent);	
 	agent->setCurrentAction(this);
 }
 
 void Engage::exit(Agent* agent, float dt)
 {
-	agent->setAttackTarget(nullptr);
+	agent->setTarget(nullptr);
 	agent->setCurrentAction(nullptr);
 }
 
@@ -61,10 +78,7 @@ void Engage::updateAction(Agent* agent, float dt)
 			}
 		}
 		
-		bestAction->enter(agent, dt);
+		if (bestAction)
+			bestAction->enter(agent, dt);
 	}
-}
-
-void Engage::updateTimer(float dt)
-{
 }

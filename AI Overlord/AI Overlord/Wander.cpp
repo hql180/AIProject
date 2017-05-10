@@ -45,6 +45,3 @@ void Wander::updateAction(Agent * agent, float dt)
 	}
 }
 
-void Wander::updateTimer(float dt)
-{
-}

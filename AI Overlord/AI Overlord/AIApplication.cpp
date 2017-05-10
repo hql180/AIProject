@@ -12,6 +12,7 @@
 #include "Wander.h"
 #include "Seek.h"
 #include "Engage.h"
+#include "BasicMelee.h"
 
 using namespace aie;
 using namespace glm;
@@ -72,7 +73,7 @@ bool AIApplication::startup()
 
 	m_agents.back()->getActions().push_back(new Wander());
 
-	m_agents.back()->getTActions().push_back(new Seek());
+	m_agents.back()->getTActions().push_back(new BasicMelee());
 
 	return true;
 }

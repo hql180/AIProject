@@ -26,6 +26,7 @@ protected:
 	float m_CDTimer;
 	float m_castTime;
 	float m_castTimer;
+	bool m_isCasting;
 
 	//Action* 
 

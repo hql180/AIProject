@@ -42,7 +42,7 @@ void Attack::updateTimer(float dt)
 void Attack::applyDamage(Agent* agent)
 {
 	agent->subMana(m_cost);
-	agent->getAttackTarget()->takeDamage(m_damageMultiplier * agent->getAttackDamage());
+	agent->getTarget()->takeDamage(m_damageMultiplier * agent->getAttackDamage());
 	m_castTimer = 0;
 	m_CDTimer = m_coolDown;
 }

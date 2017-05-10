@@ -41,6 +41,11 @@ bool Agent::inVisionRange(Agent * agent)
 	return false;
 }
 
+bool Agent::inLineOfSight(Agent * target)
+{
+	return (getAngleToTarget(target) <= m_FOV);
+}
+
 Action* Agent::getBestAction(float dt)
 {
 	if (m_currentAction == nullptr)
@@ -176,6 +181,14 @@ void Agent::checkDistanceToTarget()
 	}
 }
 
+// Calculates angle from agent's forward velocity to target using dot product
+float Agent::getAngleToTarget(Agent * target)
+{
+	return acosf(glm::dot(glm::normalize(m_velocity), glm::normalize(target->getPostion())));
+}
+
+
+
 float Agent::getMoveSpeed()
 {
 	return m_moveSpeed;
@@ -193,7 +206,7 @@ void Agent::setCurrentAction(Action * action)
 	m_currentAction = action;
 }
 
-void Agent::setAttackTarget(Agent * agent)
+void Agent::setTarget(Agent * agent)
 {
 	m_currentTarget = agent;
 }
@@ -214,7 +227,7 @@ void Agent::setVelocity(glm::vec3& targetVelocity)
 	m_velocity = targetVelocity;
 }
 
-Agent * Agent::getAttackTarget()
+Agent * Agent::getTarget()
 {
 	return m_currentTarget;
 }

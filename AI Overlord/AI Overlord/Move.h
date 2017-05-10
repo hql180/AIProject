@@ -14,13 +14,12 @@ public:
 	virtual void enter(Agent* agent, float dt);
 	virtual void exit(Agent* agent, float dt);
 	virtual void updateAction(Agent* agent, float dt);
-	virtual void updateTimer(float dt);
 
 protected:
-	void generatePath(Agent* agent, glm::vec3& destination);
+	//void generatePath(Agent* agent, glm::vec3& destination);
 
-	void followPath(Agent* agent, float dt);
+	//void followPath(Agent* agent, float dt);
 
-	std::list<Node*> m_currentPath;
+	//std::list<Node*> m_currentPath;
 };
 
