@@ -2,6 +2,13 @@
 #include "Action.h"
 #include <set>
 #include <algorithm>
+#include "Gizmos.h"
+#include <iostream>
+#include <random>
+
+std::random_device rd1;
+std::mt19937 gen1(rd1());
+std::uniform_int_distribution<int> dis1(0, 20);
 
 Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f)
 {
@@ -9,9 +16,16 @@ Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(
 
 Agent::Agent(glm::vec3 & pos, PathGraph* graph, glm::vec4& colour) : m_postion(pos), m_pathGraph(graph), m_colour(colour), m_velocity(0), m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f), m_moveSpeed(5.f)
 {
+	m_FOV = 0.698132f;
+	m_visionRange = 10.f;
 
+
+	m_maxMana = m_stats.intelligence * 10.f;
+	m_mana = m_maxMana;
+
+	m_maxHealth = m_stats.strength * 2.f + m_stats.vitality * 4.f;
+	m_health = m_maxHealth;
 }
-
 
 Agent::~Agent()
 {
@@ -46,6 +60,11 @@ bool Agent::inLineOfSight(Agent * target)
 	return (getAngleToTarget(target) <= m_FOV);
 }
 
+bool Agent::inLineOfSight(float angle)
+{
+	return (angle <= m_FOV);
+}
+
 Action* Agent::getBestAction(float dt)
 {
 	if (m_currentAction == nullptr)
@@ -67,14 +86,18 @@ Action* Agent::getBestAction(float dt)
 		}
 	}
 
+	Agent* bestTarget = nullptr;
+
 	// Then loop through actionable targets and evaluate available actions against that target
 	for (auto& target : m_actionableHostiles)
 	{
-		for (auto& action : target->m_hostileActions)
+		m_currentTarget = target;
+		for (auto& action : m_targetedActions)
 		{			
 			float score = action->evaluate(this, dt);
 			if (score > bestScore)
 			{
+				bestTarget = target;
 				bestAction = action;
 				bestScore = score;
 			}
@@ -89,6 +112,7 @@ Action* Agent::getBestAction(float dt)
 			{				
 				m_currentAction->exit(this, dt);
 			}
+			m_currentTarget = bestTarget;
 			m_currentActionScore = bestScore;
 			m_currentActionScore *= 1.05f;
 			bestAction->enter(this, dt);
@@ -101,10 +125,12 @@ Action* Agent::getBestAction(float dt)
 
 void Agent::update(std::vector<Agent*> agentList, float dt)
 {
+	if (m_health <= 0)
+		respawn();
 	// loops through all other agents
 	for (auto& agent : agentList)
 	{
-		if (agent != this) //  && inVisionRange(agent)
+		if (agent != this && inVisionRange(agent) && inLineOfSight(agent))
 		{
 			if (!contains(m_actionableHostiles, agent))
 			{
@@ -113,24 +139,27 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 		}
 	}	
 
-	for (int i = m_actionableHostiles.size() - 1; i > 0; --i)
+	for (int i = m_actionableHostiles.size() - 1; i >= 0; --i)
 	{
 		if (!inVisionRange(m_actionableHostiles[i]))
 		{
-			/*auto it = m_actionableTargets.begin();
-			std::advance(it, i);*/
+			if (m_actionableHostiles[i] == m_currentTarget)
+				m_currentTarget == nullptr;
 			m_actionableHostiles.erase(m_actionableHostiles.begin() + i);
 		}
 	}
+	glm::vec3 vision = glm::normalize(m_velocity)*m_visionRange;
+	//aie::Gizmos::addArcRing(m_postion, 0, m_visionRange * 0.95f, m_visionRange, 4, 20, m_colour);
+	aie::Gizmos::addLine(m_postion, vision + m_postion, m_colour);
+	aie::Gizmos::addLine(m_postion, glm::vec3(vision.x * cosf(m_FOV) + vision.z * sinf(m_FOV), 0, -vision.x * sinf(m_FOV) + vision.z * cosf(m_FOV)) + m_postion, m_colour);
+	aie::Gizmos::addLine(m_postion, glm::vec3(vision.x * cosf(-m_FOV) + vision.z * sinf(-m_FOV), 0, -vision.x * sinf(-m_FOV) + vision.z * cosf(-m_FOV)) + m_postion, m_colour);
 
 	m_currentAction = getBestAction(dt);
 
-	for (auto& attack : m_targetedActions)
+	for (auto& action : m_targetedActions)
 	{
-		attack->updateTimer(dt);
+		action->updateTimer(dt);
 	}
-
-	//m_velocity = m_velocity * (0.80f);
 	
 	if (m_currentAction)
 	{
@@ -150,7 +179,7 @@ float Agent::getHealthPercentage()
 
 float Agent::getAttackDamage()
 {
-	return 1.0f;
+	return m_stats.agility * 0.5f + m_stats.intelligence + m_stats.strength;
 }
 
 void Agent::subMana(float amount)
@@ -184,9 +213,8 @@ void Agent::checkDistanceToTarget()
 // Calculates angle from agent's forward velocity to target using dot product
 float Agent::getAngleToTarget(Agent * target)
 {
-	return acosf(glm::dot(glm::normalize(m_velocity), glm::normalize(target->getPostion())));
+	return acosf(glm::dot(glm::normalize(m_velocity), glm::normalize(target->getPostion() - m_postion)));
 }
-
 
 
 float Agent::getMoveSpeed()
@@ -209,6 +237,14 @@ void Agent::setCurrentAction(Action * action)
 void Agent::setTarget(Agent * agent)
 {
 	m_currentTarget = agent;
+}
+
+void Agent::respawn()
+{
+	m_health = m_maxHealth;
+	m_mana = m_maxMana;
+	m_currentAction = nullptr;
+	m_postion = glm::vec3(dis1(gen1), 0, dis1(gen1));
 }
 
 bool Agent::takeDamage(float damage)

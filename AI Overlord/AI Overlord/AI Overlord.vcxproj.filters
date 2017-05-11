@@ -72,6 +72,12 @@
     <ClInclude Include="Seek.h">
       <Filter>Header Files\Actions</Filter>
     </ClInclude>
+    <ClInclude Include="BasicMagic.h">
+      <Filter>Header Files\Actions\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -114,6 +120,12 @@
       <Filter>Source Files\Actions</Filter>
     </ClCompile>
     <ClCompile Include="Seek.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicMagic.cpp">
+      <Filter>Source Files\Actions\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

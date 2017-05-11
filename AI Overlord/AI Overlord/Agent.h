@@ -8,10 +8,10 @@
 
 struct Stats
 {
-	float strength = 0.0f;
-	float agility = 0.0f;
-	float intelligence = 0.0f;
-	float vitality = 0.0f;
+	float strength = 5.0f;
+	float agility = 5.0f;
+	float intelligence = 5.0f;
+	float vitality = 5.0f;
 };
 
 class Agent
@@ -31,6 +31,8 @@ public:
 
 	bool inLineOfSight(Agent* target);
 
+	bool inLineOfSight(float angle);
+
 	Action* getBestAction(float dt); 
 
 	void update(std::vector<Agent*> agentList, float dt);
@@ -40,6 +42,8 @@ public:
 	float getHealthPercentage();
 
 	float getAttackDamage();
+
+	bool takeDamage(float damage);
 
 	void subMana(float amount);
 
@@ -61,7 +65,7 @@ public:
 
 	void setTarget(Agent* agent);
 
-	bool takeDamage(float damage);
+	void respawn();
 
 	glm::vec3 getVelocity();
 
@@ -97,7 +101,8 @@ protected:
 
 	float m_maxMana, m_mana;
 
-	float m_minSkillRange, m_maxSkillRange;
+	// Will to try to stay this many units from target
+	float m_preferedRange;
 
 	float m_visionRange, m_FOV;
 

@@ -17,7 +17,7 @@ Wander::~Wander()
 
 float Wander::evaluate(Agent * agent, float dt)
 {
-	return 1.0f;
+	return 0.01f;
 }
 
 void Wander::enter(Agent * agent, float dt)

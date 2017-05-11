@@ -18,7 +18,11 @@ public:
 
 	void applyDamage(Agent* agent);
 
-protected:
+
+
+protected:	
+	bool needNewPath(Agent* agent);
+
 	float m_cost;
 	float m_attackRange;
 	float m_damageMultiplier;

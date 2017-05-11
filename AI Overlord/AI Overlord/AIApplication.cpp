@@ -1,5 +1,6 @@
 #include "AIApplication.h"
 
+
 #include <list>
 #include <algorithm>
 
@@ -13,6 +14,7 @@
 #include "Seek.h"
 #include "Engage.h"
 #include "BasicMelee.h"
+#include "BasicMagic.h"
 
 using namespace aie;
 using namespace glm;
@@ -67,13 +69,24 @@ bool AIApplication::startup()
 
 	m_agents.back()->getActions().push_back(new Wander());
 
-	m_agents.back()->getHActions().push_back(new Engage(m_agents.back()));
+	//m_agents.back()->getHActions().push_back(new Engage(m_agents.back()));
+
+	m_agents.back()->getTActions().push_back(new BasicMelee());
+
+	m_agents.push_back(new Agent(vec3(3, 0, 6), m_pathGraph, vec4(1, 1, 0, 1)));
+
+	m_agents.back()->getActions().push_back(new Wander());
+
+
+	m_agents.back()->getTActions().push_back(new BasicMelee());
 
 	m_agents.push_back(new Agent(vec3(2, 0, 2), m_pathGraph, vec4(1, 0, 1, 1)));
 
 	m_agents.back()->getActions().push_back(new Wander());
 
-	m_agents.back()->getTActions().push_back(new BasicMelee());
+	//m_agents.back()->getTActions().push_back(new BasicMelee());
+
+	m_agents.back()->getTActions().push_back(new BasicMagic());
 
 	return true;
 }
@@ -88,6 +101,8 @@ void AIApplication::shutdown()
 
 void AIApplication::update(float dt)
 {
+	if (dt > 1.f)
+		dt = 1.f;
 	m_camera.update();
 
 	Gizmos::clear();

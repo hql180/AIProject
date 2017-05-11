@@ -43,8 +43,14 @@ void Attack::applyDamage(Agent* agent)
 {
 	agent->subMana(m_cost);
 	agent->getTarget()->takeDamage(m_damageMultiplier * agent->getAttackDamage());
+	m_isCasting = false;
 	m_castTimer = 0;
 	m_CDTimer = m_coolDown;
+}
+
+bool Attack::needNewPath(Agent* agent)
+{
+	return (m_currentPath.size() == 0 || glm::length(m_currentPath.back()->position - agent->getTarget()->getPostion()) > 1.0f);
 }
 
 float Attack::checkCoolDown(Agent* agent)
@@ -56,11 +62,11 @@ float Attack::checkCoolDown(Agent* agent)
 float Attack::checkMana(Agent * agent)
 {
 	//return (agent->getCurrentMana >= m_cost) ? 1.0f : agent->getCurrentMana / m_cost;
-	return (agent->getCurrentMana() >= m_cost);
+	return (agent->getCurrentMana() >= m_cost) ? 1.0f : 0.f;
 }
 
 float Attack::checkDPS(Agent * agent)
 {
 	float damage = agent->getAttackDamage() * m_damageMultiplier;
-	return (m_castTime >= 1) ? damage / m_castTime : damage * m_castTime;
+	return (m_castTime >= 1) ? damage / m_castTime + damage : damage * m_castTime + damage;
 }

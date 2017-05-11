@@ -58,7 +58,7 @@ void Engage::exit(Agent* agent, float dt)
 
 void Engage::updateAction(Agent* agent, float dt)
 {
-	if (false && m_targetAgent->getCurrentHealth() <= 0)
+	/*if (false && m_targetAgent->getCurrentHealth() <= 0)
 	{
 		exit(agent, dt);
 	}
@@ -80,5 +80,5 @@ void Engage::updateAction(Agent* agent, float dt)
 		
 		if (bestAction)
 			bestAction->enter(agent, dt);
-	}
+	}*/
 }
