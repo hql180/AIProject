@@ -1,6 +1,8 @@
 #include "Attack.h"
 #include "Agent.h"
+#include "Gizmos.h"
 
+#include <iostream>
 #include <algorithm>
 
 Attack::Attack()
@@ -39,13 +41,39 @@ void Attack::updateTimer(float dt)
 		m_CDTimer = 0;
 }
 
-void Attack::applyDamage(Agent* agent)
+void Attack::applyDamage(Agent * target, float damage)
+{
+	if (target)
+	{
+		target->takeDamage(damage);
+		std::cout << damage << std::endl;
+	}
+}
+
+void Attack::finishAttack(Agent * agent)
 {
 	agent->subMana(m_cost);
-	agent->getTarget()->takeDamage(m_damageMultiplier * agent->getAttackDamage());
 	m_isCasting = false;
 	m_castTimer = 0;
 	m_CDTimer = m_coolDown;
+
+	if (!agent->contains(agent->getTarget()->getHostiles(), agent))
+	{
+		agent->getTarget()->getHostiles().push_back(agent);
+	}
+}
+
+void Attack::seekTarget(Agent * agent, float dt)
+{
+
+	if (needNewPath(agent))
+	{
+		//m_thread = new std::thread([&]() { generatePath(agent, agent->getTarget()->getPostion()); });
+		generatePath(agent, agent->getTarget()->getPostion());
+	}
+
+	followPath(agent, dt);
+	aie::Gizmos::addRing(agent->getTarget()->getPostion(), 0.2f, 0.3f, 5, agent->getColour());
 }
 
 bool Attack::needNewPath(Agent* agent)

@@ -1,7 +1,7 @@
 #pragma once
-#include "Move.h"
+#include "Action.h"
 class Wander :
-	public Move
+	public Action
 {
 public:
 	Wander();

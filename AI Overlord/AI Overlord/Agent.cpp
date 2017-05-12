@@ -8,7 +8,7 @@
 
 std::random_device rd1;
 std::mt19937 gen1(rd1());
-std::uniform_int_distribution<int> dis1(0, 20);
+std::uniform_int_distribution<int> dis1(0, 40);
 
 Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f)
 {
@@ -18,7 +18,7 @@ Agent::Agent(glm::vec3 & pos, PathGraph* graph, glm::vec4& colour) : m_postion(p
 {
 	m_FOV = 0.698132f;
 	m_visionRange = 10.f;
-
+	m_radius = 0.5f;
 
 	m_maxMana = m_stats.intelligence * 10.f;
 	m_mana = m_maxMana;
@@ -125,6 +125,8 @@ Action* Agent::getBestAction(float dt)
 
 void Agent::update(std::vector<Agent*> agentList, float dt)
 {
+	m_allAgents = agentList;
+
 	if (m_health <= 0)
 		respawn();
 	// loops through all other agents
@@ -293,8 +295,31 @@ std::vector<Action*>& Agent::getActions()
 	return m_actions;
 }
 
+std::vector<Agent*>& Agent::getHostiles()
+{
+	return m_actionableHostiles;
+}
+
+std::vector<Agent*>& Agent::getAllAgents()
+{
+	return m_allAgents;
+}
+
 glm::vec4 & Agent::getColour()
 {
 	return m_colour;
+}
+
+glm::vec3 Agent::getDirectionToTarget()
+{
+	if (m_currentTarget)
+		return glm::normalize(m_currentTarget->getPostion() - m_postion);
+	else
+		return glm::vec3(0);
+}
+
+float Agent::getRadius()
+{
+	return m_radius;
 }
 

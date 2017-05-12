@@ -57,19 +57,10 @@
     <ClInclude Include="BasicMelee.h">
       <Filter>Header Files\Actions\Attacks</Filter>
     </ClInclude>
-    <ClInclude Include="Engage.h">
-      <Filter>Header Files\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="AIApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Move.h">
-      <Filter>Header Files\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="Wander.h">
-      <Filter>Header Files\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="Seek.h">
       <Filter>Header Files\Actions</Filter>
     </ClInclude>
     <ClInclude Include="BasicMagic.h">
@@ -77,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="Projectile.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicRange.h">
+      <Filter>Header Files\Actions\Attacks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -107,26 +101,20 @@
     <ClCompile Include="BasicMelee.cpp">
       <Filter>Source Files\Actions\Attacks</Filter>
     </ClCompile>
-    <ClCompile Include="Engage.cpp">
-      <Filter>Source Files\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="AIApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Move.cpp">
-      <Filter>Source Files\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="Wander.cpp">
       <Filter>Source Files\Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="Seek.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BasicMagic.cpp">
       <Filter>Source Files\Actions\Attacks</Filter>
     </ClCompile>
     <ClCompile Include="Projectile.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicRange.cpp">
+      <Filter>Source Files\Actions\Attacks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

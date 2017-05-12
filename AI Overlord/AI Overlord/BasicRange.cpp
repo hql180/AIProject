@@ -1,30 +1,32 @@
-#include "BasicMagic.h"
+#include "basicRange.h"
+#include "Projectile.h"
 #include "Agent.h"
 #include "Gizmos.h"
 
-BasicMagic::BasicMagic()
+BasicRange::BasicRange()
 {
-	m_cost = 20.f;
-	m_attackRange = 7.f;
-	m_damageMultiplier = 2.f;
-	m_coolDown = 5.f;
+	m_cost = 0;
+	m_attackRange = 8.f;
+	m_damageMultiplier = 1.5f;
+	m_coolDown = 1.35f;
 	m_CDTimer = 0;
-	m_castTime = 1.55f;
+	m_castTime = 0.35f;
 	m_castTimer = 0;
-	m_radius = 0.3f;
-	m_projectileSpeed = 5.f;
-
+	m_radius = 0.2f;
+	m_projectileSpeed = 7.f;
 	m_isCasting = false;
+
+	m_projectTilePool.push_back(Projectile());
 	m_projectTilePool.push_back(Projectile());
 	m_projectTilePool.push_back(Projectile());
 }
 
 
-BasicMagic::~BasicMagic()
+BasicRange::~BasicRange()
 {
 }
 
-float BasicMagic::evaluate(Agent * agent, float dt)
+float BasicRange::evaluate(Agent * agent, float dt)
 {
 	float score = 0;
 
@@ -33,12 +35,12 @@ float BasicMagic::evaluate(Agent * agent, float dt)
 	return score;
 }
 
-void BasicMagic::enter(Agent * agent, float dt)
+void BasicRange::enter(Agent * agent, float dt)
 {
-
+	
 }
 
-void BasicMagic::exit(Agent * agent, float dt)
+void BasicRange::exit(Agent * agent, float dt)
 {
 	m_isCasting = false;
 	m_castTimer = 0;
@@ -46,12 +48,18 @@ void BasicMagic::exit(Agent * agent, float dt)
 	m_currentPath.clear();
 }
 
-void BasicMagic::updateAction(Agent * agent, float dt)
+void BasicRange::updateAction(Agent * agent, float dt)
 {
 	agent->checkDistanceToTarget();
 	if (agent->getDistanceToTarget() > m_attackRange && !m_isCasting)
 	{
-		seekTarget(agent, dt);
+		if (needNewPath(agent))
+		{
+			generatePath(agent, agent->getTarget()->getPostion());
+		}
+
+		followPath(agent, dt);
+		aie::Gizmos::addRing(agent->getTarget()->getPostion(), 0.2f, 0.3f, 5, agent->getColour());
 	}
 	else if (agent->getDistanceToTarget() <= m_attackRange && m_CDTimer <= 0 || m_isCasting && m_CDTimer <= 0)
 	{
@@ -67,8 +75,7 @@ void BasicMagic::updateAction(Agent * agent, float dt)
 			{
 				if (!projectile.getActive())
 				{
-					projectile.shoot(this, agent, 3.f, 7.5f);
-					
+					projectile.shoot(this, agent, 0.5f);
 					break;
 				}
 			}
@@ -77,11 +84,9 @@ void BasicMagic::updateAction(Agent * agent, float dt)
 	}
 }
 
-void BasicMagic::updateTimer(float dt)
+void BasicRange::updateTimer(float dt)
 {
 	Attack::updateTimer(dt);
 	for (auto& projectile : m_projectTilePool)
-	{
 		projectile.update(dt);
-	}
 }

@@ -1,5 +1,8 @@
 #pragma once
 #include "Attack.h"
+#include "Projectile.h"
+#include <vector>
+
 class BasicMagic :
 	public Attack
 {
@@ -12,5 +15,8 @@ public:
 	virtual void exit(Agent* agent, float dt);
 	virtual void updateAction(Agent* agent, float dt);
 	virtual void updateTimer(float dt);
+
+protected:
+	std::vector<Projectile> m_projectTilePool;
 };
 

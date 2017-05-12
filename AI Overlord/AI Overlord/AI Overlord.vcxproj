@@ -124,7 +124,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies;$(SolutionDir)\bootstrap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies\glm\glm;$(SolutionDir)\dependencies;$(SolutionDir)\bootstrap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,13 +163,11 @@
     <ClInclude Include="Attack.h" />
     <ClInclude Include="BasicMagic.h" />
     <ClInclude Include="BasicMelee.h" />
+    <ClInclude Include="BasicRange.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Engage.h" />
-    <ClInclude Include="Move.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PathGraph.h" />
     <ClInclude Include="Projectile.h" />
-    <ClInclude Include="Seek.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Wander.h" />
@@ -179,16 +177,14 @@
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="BasicMagic.cpp" />
     <ClCompile Include="BasicMelee.cpp" />
-    <ClCompile Include="Engage.cpp" />
+    <ClCompile Include="BasicRange.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="AIApplication.cpp" />
     <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Move.cpp" />
     <ClCompile Include="PathFinder.cpp" />
     <ClCompile Include="PathGraph.cpp" />
     <ClCompile Include="Projectile.cpp" />
-    <ClCompile Include="Seek.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Wander.cpp" />
   </ItemGroup>

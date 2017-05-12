@@ -11,10 +11,9 @@
 #include "PathGraph.h"
 #include "Agent.h"
 #include "Wander.h"
-#include "Seek.h"
-#include "Engage.h"
 #include "BasicMelee.h"
 #include "BasicMagic.h"
+#include "BasicRange.h"
 
 using namespace aie;
 using namespace glm;
@@ -40,9 +39,9 @@ bool AIApplication::startup()
 
 	m_pathGraph = new PathGraph();
 
-	for (int x = 0; x <= 20; ++x)
+	for (int x = 0; x <= 40; ++x)
 	{
-		for (int z = 0; z <= 20; ++z)
+		for (int z = 0; z <= 40; ++z)
 		{
 			m_pathGraph->addNode(vec3(x, 0, z));
 		}
@@ -69,24 +68,51 @@ bool AIApplication::startup()
 
 	m_agents.back()->getActions().push_back(new Wander());
 
-	//m_agents.back()->getHActions().push_back(new Engage(m_agents.back()));
-
 	m_agents.back()->getTActions().push_back(new BasicMelee());
+
+	m_agents.back()->getTActions().push_back(new BasicMagic());
+
+	m_agents.back()->getTActions().push_back(new BasicRange());
 
 	m_agents.push_back(new Agent(vec3(3, 0, 6), m_pathGraph, vec4(1, 1, 0, 1)));
 
 	m_agents.back()->getActions().push_back(new Wander());
 
-
 	m_agents.back()->getTActions().push_back(new BasicMelee());
 
-	m_agents.push_back(new Agent(vec3(2, 0, 2), m_pathGraph, vec4(1, 0, 1, 1)));
+	m_agents.back()->getTActions().push_back(new BasicMagic());
+
+	m_agents.back()->getTActions().push_back(new BasicRange());
+
+	m_agents.push_back(new Agent(vec3(2, 0, 8), m_pathGraph, vec4(1, 0, 1, 1)));
 
 	m_agents.back()->getActions().push_back(new Wander());
 
-	//m_agents.back()->getTActions().push_back(new BasicMelee());
+	m_agents.back()->getTActions().push_back(new BasicMelee());
 
 	m_agents.back()->getTActions().push_back(new BasicMagic());
+
+	m_agents.back()->getTActions().push_back(new BasicRange());
+
+	m_agents.push_back(new Agent(vec3(6, 0, 2), m_pathGraph, vec4(1, 1, 1, 1)));
+
+	m_agents.back()->getActions().push_back(new Wander());
+
+	m_agents.back()->getTActions().push_back(new BasicMelee());
+
+	m_agents.back()->getTActions().push_back(new BasicMagic());
+
+	m_agents.back()->getTActions().push_back(new BasicRange());
+
+	m_agents.push_back(new Agent(vec3(7, 0, 3), m_pathGraph, vec4(0, 1, 1, 1)));
+
+	m_agents.back()->getActions().push_back(new Wander());
+
+	m_agents.back()->getTActions().push_back(new BasicMelee());
+
+	m_agents.back()->getTActions().push_back(new BasicMagic());
+
+	m_agents.back()->getTActions().push_back(new BasicRange());
 
 	return true;
 }
@@ -120,7 +146,7 @@ void AIApplication::update(float dt)
 	for (int i = 0; i < m_agents.size(); ++i)
 	{
 		m_agents[i]->update(m_agents, (dt < 1) ? dt : 1);
-		Gizmos::addAABB(m_agents[i]->getPostion(), vec3(1), m_agents[i]->getColour());
+		Gizmos::addAABB(m_agents[i]->getPostion(), vec3(m_agents[i]->getRadius()), m_agents[i]->getColour());
 	}
 
 

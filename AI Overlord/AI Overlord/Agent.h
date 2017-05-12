@@ -84,12 +84,22 @@ public:
 
 	std::vector<Action*>& getActions();
 
+	std::vector<Agent*>& getHostiles();
+
+	std::vector<Agent*>& getAllAgents();
+
 	glm::vec4& getColour();
+
+	glm::vec3 getDirectionToTarget();
+
+	float getRadius();
 
 protected:
 	glm::vec3 m_postion;
 	glm::vec3 m_velocity;
 	glm::vec3 m_rotation;
+
+	float m_radius;
 
 	glm::vec4 m_colour;
 
@@ -113,6 +123,7 @@ protected:
 	PathGraph* m_pathGraph;
 
 	std::vector<Agent*> m_actionableHostiles;
+	std::vector<Agent*> m_allAgents;
 
 	std::vector<Action*> m_actions; // list of actions for self use
 	std::vector<Action*> m_targetedActions;

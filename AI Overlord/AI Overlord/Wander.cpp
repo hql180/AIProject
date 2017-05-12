@@ -25,6 +25,8 @@ void Wander::enter(Agent * agent, float dt)
 	glm::vec3 target = agent->getPostion() + (((glm::length(agent->getVelocity()) != 0) ? glm::normalize(agent->getVelocity()) : agent->getVelocity()) * 2.5f);
 	glm::vec3 displacement = glm::normalize(glm::vec3(dis(gen), 0, dis(gen)));
 		
+	//std::thread pathfinding([&]() { generatePath(agent, target + displacement); });
+	//pathfinding.join();
 	generatePath(agent, target + displacement);
 }
 

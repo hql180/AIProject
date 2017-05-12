@@ -3,6 +3,8 @@
 #include "PathFinder.h"
 #include "Gizmos.h"
 
+#include <thread>
+
 void Action::updateTimer(float dt)
 {
 }
