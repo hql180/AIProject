@@ -32,6 +32,16 @@ void Projectile::update(float dt)
 
 		aie::Gizmos::addSphere(m_pos, m_radius, 3, 3, m_colour);
 
+		for (auto& obs : *m_shooter->getObstacle())
+		{
+			if (glm::length(obs.position - m_pos) <= obs.radius + m_radius)
+			{
+				m_isActive = false;
+				break;
+			}
+		}
+
+
 		if (m_distanceTravelled >= m_range)
 		{
 			m_isActive = false;

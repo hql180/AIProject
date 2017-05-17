@@ -52,12 +52,25 @@ bool AIApplication::startup()
 		}
 	}
 
-	for (int x = 0; x <= 40; ++x)
+	for (int x = 0; x < 40; ++x)
 	{
 		m_obstacles.push_back(Obstacle());
-		m_obstacles.back().position = vec3(dis2(gen2), 0, dis2(gen2));
+		//m_obstacles.back().position = vec3(dis2(gen2), 0, dis2(gen2));
+		m_obstacles.back().position = vec3(20, 0, x);
 		m_obstacles.back().shape = Shape::Box;
 		m_obstacles.back().extent = vec3(1);
+		m_obstacles.back().radius = 0.5f;
+		m_pathGraph->removeNodeAt(m_obstacles.back().position, 0.5);
+	}
+
+	for (int x = 0; x < 40; ++x)
+	{
+		m_obstacles.push_back(Obstacle());
+		//m_obstacles.back().position = vec3(dis2(gen2), 0, dis2(gen2));
+		m_obstacles.back().position = vec3(x, 0, 20);
+		m_obstacles.back().shape = Shape::Box;
+		m_obstacles.back().extent = vec3(1);
+		m_obstacles.back().radius = 0.5f;
 		m_pathGraph->removeNodeAt(m_obstacles.back().position, 0.5);
 	}
 

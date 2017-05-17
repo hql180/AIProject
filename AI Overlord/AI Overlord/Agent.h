@@ -36,6 +36,8 @@ public:
 
 	Action* getBestAction(float dt); 
 
+	Action* getCurrentAction();
+
 	void update(std::vector<Agent*> agentList, float dt);
 
 	float getCurrentHealth();
@@ -66,7 +68,7 @@ public:
 
 	void setTarget(Agent* agent);
 
-	void respawn();
+	void respawn(Agent* agent, float dt);
 
 	glm::vec3 getVelocity();
 

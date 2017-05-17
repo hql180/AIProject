@@ -71,8 +71,9 @@ void Attack::seekTarget(Agent * agent, float dt)
 		generatePath(agent, agent->getTarget()->getPostion());
 	}
 
-	followPath(agent, dt);
 	aie::Gizmos::addRing(agent->getTarget()->getPostion(), 0.2f, 0.3f, 5, agent->getColour());
+	followPath(agent, dt);
+	
 }
 
 bool Attack::needNewPath(Agent* agent)

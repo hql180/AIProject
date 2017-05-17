@@ -34,16 +34,24 @@ void Action::generatePath(Agent * agent, glm::vec3 & destination)
 
 void Action::followPath(Agent * agent, float dt)
 {
-	glm::vec3 vecToTarget = (m_currentPath.front()->position - agent->getPostion());
+	if (m_currentPath.size() == 0)
+	{
+		if (agent->getCurrentAction())
+			agent->getCurrentAction()->exit(agent, dt);
+	}
+	else
+	{
+		glm::vec3 vecToTarget = (m_currentPath.front()->position - agent->getPostion());
 
-	aie::Gizmos::addRing(m_currentPath.front()->position, 0.2f, 0.3f, 5, agent->getColour());
+		aie::Gizmos::addRing(m_currentPath.front()->position, 0.2f, 0.3f, 5, agent->getColour());
 
-	glm::vec3 force = ((glm::length(vecToTarget) != 0) ? glm::normalize(vecToTarget) : vecToTarget) * agent->getMoveSpeed();
+		glm::vec3 force = ((glm::length(vecToTarget) != 0) ? glm::normalize(vecToTarget) : vecToTarget) * agent->getMoveSpeed();
 
-	if (glm::length(vecToTarget) < 0.5f)
-		m_currentPath.pop_front();
+		if (glm::length(vecToTarget) < 0.5f)
+			m_currentPath.pop_front();
 
-	agent->setVelocity(force);
+		agent->setVelocity(force);
 
-	agent->updateMovement(dt);
+		agent->updateMovement(dt);
+	}
 }

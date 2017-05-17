@@ -57,7 +57,26 @@ bool Agent::inVisionRange(Agent * agent)
 
 bool Agent::inLineOfSight(Agent * target)
 {
-	return (getAngleToTarget(target) <= m_FOV);
+	if (getAngleToTarget(target) <= m_FOV)
+	{
+		glm::vec3 dirToTarget = glm::normalize(target->getPostion() - m_postion);
+		for (auto& obs : *m_obstacles)
+		{
+			glm::vec3 vecToObs = obs.position - m_postion;
+			if (glm::length(obs.position - m_postion) <= m_visionRange + obs.radius)
+			{
+				float projScalar = glm::clamp((glm::dot(dirToTarget, vecToObs)), 0.f, glm::length(obs.position - m_postion));
+
+				glm::vec3 projectedPos = m_postion + projScalar * dirToTarget;
+
+				if (glm::length(projectedPos - obs.position) <= obs.radius)
+					return false;
+			}
+		}
+		
+	}
+
+	return true;
 }
 
 bool Agent::inLineOfSight(float angle)
@@ -90,18 +109,21 @@ Action* Agent::getBestAction(float dt)
 
 	// Then loop through actionable targets and evaluate available actions against that target
 	for (auto& target : m_actionableHostiles)
-	{
-		m_currentTarget = target;
-		for (auto& action : m_targetedActions)
-		{			
-			float score = action->evaluate(this, dt);
-			if (score > bestScore)
+	{		
+		if(inLineOfSight(target))
+		{
+			m_currentTarget = target;
+			for (auto& action : m_targetedActions)
 			{
-				bestTarget = target;
-				bestAction = action;
-				bestScore = score;
+				float score = action->evaluate(this, dt);
+				if (score > bestScore)
+				{
+					bestTarget = target;
+					bestAction = action;
+					bestScore = score;
+				}
 			}
-		}		
+		}
 	}
 
 	if (bestScore > m_currentActionScore)
@@ -123,12 +145,17 @@ Action* Agent::getBestAction(float dt)
 	return m_currentAction;
 }
 
+Action * Agent::getCurrentAction()
+{
+	return m_currentAction;
+}
+
 void Agent::update(std::vector<Agent*> agentList, float dt)
 {
 	m_allAgents = agentList;
 
 	if (m_health <= 0)
-		respawn();
+		respawn(this, dt);
 	// loops through all other agents
 	for (auto& agent : agentList)
 	{
@@ -168,6 +195,8 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 		action->updateTimer(dt);
 	}
 	
+	printf("I am at :%f, %f \n", m_postion.x, m_postion.z);
+	printf("I am :%f, %f, %f \n", m_colour.x, m_colour.y, m_colour.z);
 	if (m_currentAction)
 	{
 		m_currentAction->updateAction(this, dt);
@@ -246,11 +275,12 @@ void Agent::setTarget(Agent * agent)
 	m_currentTarget = agent;
 }
 
-void Agent::respawn()
+void Agent::respawn(Agent* agent, float dt)
 {
 	m_health = m_maxHealth;
 	m_mana = m_maxMana;
-	m_currentAction = nullptr;
+	if (m_currentAction)
+		m_currentAction->exit(agent, dt);
 	m_postion = glm::vec3(dis1(gen1), 0, dis1(gen1));
 }
 
