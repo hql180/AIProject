@@ -23,7 +23,7 @@ Agent::Agent(glm::vec3 & pos, PathGraph* graph, glm::vec4& colour) : m_postion(p
 	m_maxMana = m_stats.intelligence * 10.f;
 	m_mana = m_maxMana;
 
-	m_maxHealth = m_stats.strength * 2.f + m_stats.vitality * 4.f;
+	m_maxHealth = m_stats.strength * 4.f + m_stats.vitality *8.f;
 	m_health = m_maxHealth;
 }
 
@@ -159,6 +159,11 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 	m_currentAction = getBestAction(dt);
 
 	for (auto& action : m_targetedActions)
+	{
+		action->updateTimer(dt);
+	}
+
+	for (auto& action : m_actions)
 	{
 		action->updateTimer(dt);
 	}
@@ -318,8 +323,28 @@ glm::vec3 Agent::getDirectionToTarget()
 		return glm::vec3(0);
 }
 
+glm::vec3 Agent::getDirectionToTarget(Agent * from, Agent * to)
+{
+	return glm::normalize(to->getPostion() - from->getPostion());
+}
+
 float Agent::getRadius()
 {
 	return m_radius;
+}
+
+float Agent::getVisionRange()
+{
+	return m_visionRange;
+}
+
+void Agent::setObstacle(std::vector<Obstacle>* obs)
+{
+	m_obstacles = obs;
+}
+
+std::vector<Obstacle>* Agent::getObstacle()
+{
+	return m_obstacles;
 }
 

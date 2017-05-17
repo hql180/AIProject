@@ -5,13 +5,14 @@
 #include "Action.h"
 #include "Attack.h"
 #include "PathGraph.h"
+#include "Obstacle.h"
 
 struct Stats
 {
 	float strength = 5.0f;
 	float agility = 5.0f;
 	float intelligence = 5.0f;
-	float vitality = 5.0f;
+	float vitality = 10.0f;
 };
 
 class Agent
@@ -92,7 +93,15 @@ public:
 
 	glm::vec3 getDirectionToTarget();
 
+	glm::vec3 getDirectionToTarget(Agent* from, Agent* to);
+
 	float getRadius();
+
+	float getVisionRange();
+
+	void setObstacle(std::vector<Obstacle>* obs);
+
+	std::vector<Obstacle>* getObstacle();
 
 protected:
 	glm::vec3 m_postion;
@@ -128,6 +137,8 @@ protected:
 	std::vector<Action*> m_actions; // list of actions for self use
 	std::vector<Action*> m_targetedActions;
 	std::vector<Action*> m_hostileActions; // list of actions for other agents to use on self
+
+	std::vector<Obstacle>* m_obstacles;
 
 	Agent* m_currentTarget;
 

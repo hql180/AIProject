@@ -3,7 +3,7 @@
 
 #include <list>
 #include <algorithm>
-
+#include <random>
 
 #include "Gizmos.h"
 #include "Input.h"
@@ -14,10 +14,15 @@
 #include "BasicMelee.h"
 #include "BasicMagic.h"
 #include "BasicRange.h"
+#include "Flee.h"
 
 using namespace aie;
 using namespace glm;
 
+
+std::random_device rd2;
+std::mt19937 gen2(rd2());
+std::uniform_int_distribution<int> dis2(0, 40);
 
 AIApplication::AIApplication() : m_pathGraph(nullptr)
 {
@@ -47,6 +52,15 @@ bool AIApplication::startup()
 		}
 	}
 
+	for (int x = 0; x <= 40; ++x)
+	{
+		m_obstacles.push_back(Obstacle());
+		m_obstacles.back().position = vec3(dis2(gen2), 0, dis2(gen2));
+		m_obstacles.back().shape = Shape::Box;
+		m_obstacles.back().extent = vec3(1);
+		m_pathGraph->removeNodeAt(m_obstacles.back().position, 0.5);
+	}
+
 	for (auto& node : m_pathGraph->getNodeList())
 	{
 		std::vector<Node*> nodesInRadius;
@@ -60,13 +74,30 @@ bool AIApplication::startup()
 		}
 	}
 
-	m_testGizmo = vec3(5, 0, 5);
+	for (int i = 0; i <= 5; ++i)
+	{
+		m_agents.push_back(new Agent(vec3(i % 3, 0, i % 7), m_pathGraph, vec4(i % 2, i % 3, i % 4, 1)));
 
-	m_chaseGizmo = vec3(3, 0, 3);
+		m_agents.back()->setObstacle(&m_obstacles);
 
-	m_agents.push_back(new Agent(vec3(0), m_pathGraph, vec4(1, 0, 0, 1)));
+		m_agents.back()->getActions().push_back(new Wander());
+
+		m_agents.back()->getActions().push_back(new Flee());
+
+		m_agents.back()->getTActions().push_back(new BasicMelee());
+
+		m_agents.back()->getTActions().push_back(new BasicMagic());
+
+		m_agents.back()->getTActions().push_back(new BasicRange());
+
+	}
+
+
+	/*m_agents.push_back(new Agent(vec3(0), m_pathGraph, vec4(1, 0, 0, 1)));
 
 	m_agents.back()->getActions().push_back(new Wander());
+
+	m_agents.back()->getActions().push_back(new Flee());
 
 	m_agents.back()->getTActions().push_back(new BasicMelee());
 
@@ -78,6 +109,8 @@ bool AIApplication::startup()
 
 	m_agents.back()->getActions().push_back(new Wander());
 
+	m_agents.back()->getActions().push_back(new Flee());
+
 	m_agents.back()->getTActions().push_back(new BasicMelee());
 
 	m_agents.back()->getTActions().push_back(new BasicMagic());
@@ -87,6 +120,8 @@ bool AIApplication::startup()
 	m_agents.push_back(new Agent(vec3(2, 0, 8), m_pathGraph, vec4(1, 0, 1, 1)));
 
 	m_agents.back()->getActions().push_back(new Wander());
+
+	m_agents.back()->getActions().push_back(new Flee());
 
 	m_agents.back()->getTActions().push_back(new BasicMelee());
 
@@ -98,6 +133,8 @@ bool AIApplication::startup()
 
 	m_agents.back()->getActions().push_back(new Wander());
 
+	m_agents.back()->getActions().push_back(new Flee());
+
 	m_agents.back()->getTActions().push_back(new BasicMelee());
 
 	m_agents.back()->getTActions().push_back(new BasicMagic());
@@ -108,11 +145,13 @@ bool AIApplication::startup()
 
 	m_agents.back()->getActions().push_back(new Wander());
 
+	m_agents.back()->getActions().push_back(new Flee());
+
 	m_agents.back()->getTActions().push_back(new BasicMelee());
 
 	m_agents.back()->getTActions().push_back(new BasicMagic());
 
-	m_agents.back()->getTActions().push_back(new BasicRange());
+	m_agents.back()->getTActions().push_back(new BasicRange());*/
 
 	return true;
 }
@@ -129,6 +168,7 @@ void AIApplication::update(float dt)
 {
 	if (dt > 1.f)
 		dt = 1.f;
+
 	m_camera.update();
 
 	Gizmos::clear();
@@ -138,18 +178,17 @@ void AIApplication::update(float dt)
 
 	float speed = 2.5f;
 
-	//for (auto& agent : m_agents)
-	//{
-	//	agent->update(m_agents, dt);
-	//}
+	for (auto& obstacle : m_obstacles)
+	{
+		Gizmos::addAABB(obstacle.position, obstacle.extent, vec4(0.9f));
+	}
 
 	for (int i = 0; i < m_agents.size(); ++i)
 	{
-		m_agents[i]->update(m_agents, (dt < 1) ? dt : 1);
+		m_agents[i]->update(m_agents, dt);
 		Gizmos::addAABB(m_agents[i]->getPostion(), vec3(m_agents[i]->getRadius()), m_agents[i]->getColour());
 	}
-
-
+	
 	if (aie::Input::getInstance()->isKeyDown(aie::INPUT_KEY_LEFT))
 	{
 		m_testGizmo.z -= speed * dt;
@@ -188,38 +227,6 @@ void AIApplication::update(float dt)
 		}
 	}
 
-	//std::list<Node*> path;
-
-	//if (m_pathGraph->findNode(m_testGizmo, 0.6f) && m_pathGraph->findNode(m_chaseGizmo, 1.0f))
-	//	PathFinder::aStar(m_pathGraph->findNode(m_chaseGizmo, 0.6f), m_pathGraph->findNode(m_testGizmo, 1.0f), path);
-
-	//if (path.size() > 1)
-	//{
-	//	path.pop_front();
-
-	//	m_chaseGizmo += (glm::normalize(path.front()->position - m_chaseGizmo) * 1.5f * dt);
-	//}
-
-	//Gizmos::addAABB(m_chaseGizmo, vec3(0.5f, 0.5f, 0.5f), vec4(1, 0, 0, 1));
-	//Gizmos::addAABB(m_testGizmo, vec3(0.5f), vec4(0, 0, 1, 1));
-
-	//
-
-	//Node* current = nullptr;
-	//Node* previous = nullptr;
-
-
-	//for (auto& node : path)
-	//{
-	//	current = node;
-
-	//	if (previous)
-	//	{
-	//		Gizmos::addLine(previous->position, current->position, green);
-	//	}
-
-	//	previous = current;
-	//}
 
 	for (auto& node : m_pathGraph->getNodeList())
 	{

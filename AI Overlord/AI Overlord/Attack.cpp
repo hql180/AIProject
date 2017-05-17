@@ -46,7 +46,6 @@ void Attack::applyDamage(Agent * target, float damage)
 	if (target)
 	{
 		target->takeDamage(damage);
-		std::cout << damage << std::endl;
 	}
 }
 

@@ -165,6 +165,8 @@
     <ClInclude Include="BasicMelee.h" />
     <ClInclude Include="BasicRange.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Flee.h" />
+    <ClInclude Include="Obstacle.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PathGraph.h" />
     <ClInclude Include="Projectile.h" />
@@ -178,6 +180,7 @@
     <ClCompile Include="BasicMagic.cpp" />
     <ClCompile Include="BasicMelee.cpp" />
     <ClCompile Include="BasicRange.cpp" />
+    <ClCompile Include="Flee.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="AIApplication.cpp" />
     <ClCompile Include="Attack.cpp" />
