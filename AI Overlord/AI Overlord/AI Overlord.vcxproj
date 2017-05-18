@@ -176,6 +176,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Charge.h" />
     <ClInclude Include="Flee.h" />
+    <ClInclude Include="Fountain.h" />
     <ClInclude Include="GoToFountain.h" />
     <ClInclude Include="Heal.h" />
     <ClInclude Include="Obstacle.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="BasicRange.cpp" />
     <ClCompile Include="Charge.cpp" />
     <ClCompile Include="Flee.cpp" />
+    <ClCompile Include="Fountain.cpp" />
     <ClCompile Include="GoToFountain.cpp" />
     <ClCompile Include="Heal.cpp" />
     <ClCompile Include="main.cpp" />

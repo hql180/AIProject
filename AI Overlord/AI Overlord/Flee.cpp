@@ -34,6 +34,8 @@ float Flee::evaluate(Agent * agent, float dt)
 		return 0;
 	}
 
+	printf("flee score: %f \n", score * (m_corneredCounter / 5.f)); //Debug
+
 	return score * (m_corneredCounter / 5.f);
 }
 

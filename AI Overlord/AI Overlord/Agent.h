@@ -6,6 +6,7 @@
 #include "Attack.h"
 #include "PathGraph.h"
 #include "Obstacle.h"
+#include "Fountain.h"
 
 struct Stats
 {
@@ -51,6 +52,8 @@ public:
 	bool takeDamage(float damage);
 
 	void subMana(float amount);
+
+	void addMana(float amount);
 
 	float getCurrentMana();
 
@@ -115,6 +118,10 @@ public:
 
 	std::vector<Obstacle>* getObstacle();
 
+	void setFountains(std::vector<Fountain>* fountains);
+
+	std::vector<Fountain>* getFountains();
+
 protected:
 	glm::vec3 m_postion;
 	glm::vec3 m_velocity;
@@ -152,6 +159,7 @@ protected:
 	std::vector<Action*> m_hostileActions; // list of actions for other agents to use on self
 
 	std::vector<Obstacle>* m_obstacles;
+	std::vector<Fountain>* m_fountains;
 
 	Agent* m_currentTarget;
 

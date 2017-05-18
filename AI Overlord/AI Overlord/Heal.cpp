@@ -6,7 +6,7 @@ Heal::Heal()
 {
 	m_cost = 20.f;
 	m_attackRange = 0.f;
-	m_damageMultiplier = 1.5f;
+	m_damageMultiplier = 1.f;
 	m_CD = 8.f;
 	m_CDTimer = 0;
 	m_castTime = 3.f;

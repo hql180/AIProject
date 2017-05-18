@@ -3,6 +3,7 @@
 #include "glm.hpp"
 #include "Camera.h"
 #include "Obstacle.h"
+#include "Fountain.h"
 #include <vector>
 
 class PathGraph;
@@ -32,9 +33,7 @@ private:
 	PathGraph* m_pathGraph;
 
 	std::vector<Obstacle> m_obstacles;
-
-	glm::vec3 m_testGizmo;
-	glm::vec3 m_chaseGizmo;
+	std::vector<Fountain> m_fountains;
 	
 	std::vector<Agent*> m_agents;
 

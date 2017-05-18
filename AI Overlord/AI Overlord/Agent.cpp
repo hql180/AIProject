@@ -14,7 +14,7 @@ Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(
 {
 }
 
-Agent::Agent(glm::vec3 & pos, PathGraph* graph, glm::vec4& colour, glm::vec3& forwardDir) : m_postion(pos), m_pathGraph(graph), m_colour(colour), m_velocity(0), m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f), m_moveSpeed(5.f)
+Agent::Agent(glm::vec3 & pos, PathGraph* graph, glm::vec4& colour, glm::vec3& forwardDir) : m_postion(pos), m_pathGraph(graph), m_colour(colour), m_velocity(0), m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f), m_moveSpeed(3.f)
 {
 	m_FOV = 0.698132f;
 	m_visionRange = 10.f;
@@ -217,8 +217,6 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 		action->updateTimer(dt);
 	}
 	
-	printf("I am at :%f, %f \n", m_postion.x, m_postion.z);
-	printf("I am :%f, %f, %f \n", m_colour.x, m_colour.y, m_colour.z);
 	if (m_currentAction)
 	{
 		m_currentAction->updateAction(this, dt);
@@ -248,6 +246,11 @@ float Agent::getAttackDamage()
 void Agent::subMana(float amount)
 {
 	m_mana -= amount;
+}
+
+void Agent::addMana(float amount)
+{
+	m_mana += amount;
 }
 
 float Agent::getCurrentMana()
@@ -423,5 +426,15 @@ void Agent::setObstacle(std::vector<Obstacle>* obs)
 std::vector<Obstacle>* Agent::getObstacle()
 {
 	return m_obstacles;
+}
+
+void Agent::setFountains(std::vector<Fountain>* fountains)
+{
+	m_fountains = fountains;
+}
+
+std::vector<Fountain>* Agent::getFountains()
+{
+	return m_fountains;
 }
 

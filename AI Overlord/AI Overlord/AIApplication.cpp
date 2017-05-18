@@ -17,6 +17,7 @@
 #include "Flee.h"
 #include "Charge.h"
 #include "Heal.h"
+#include "GoToFountain.h"
 
 using namespace aie;
 using namespace glm;
@@ -120,11 +121,15 @@ bool AIApplication::startup()
 
 	m_agents.back()->setObstacle(&m_obstacles);
 
+	m_agents.back()->setFountains(&m_fountains);
+
 	m_agents.back()->getActions().push_back(new Wander());
 
 	m_agents.back()->getActions().push_back(new Flee());
 
 	m_agents.back()->getActions().push_back(new Heal());
+
+	m_agents.back()->getActions().push_back(new GoToFountain());
 
 	m_agents.back()->getTActions().push_back(new BasicMelee());
 
@@ -133,6 +138,7 @@ bool AIApplication::startup()
 	m_agents.back()->getTActions().push_back(new BasicRange());
 
 	m_agents.back()->getTActions().push_back(new Charge());
+
 
 
 	//m_agents.push_back(new Agent(vec3(8, 0, 6), m_pathGraph, vec4(0, 1, 0, 1), vec3(-1, 0, 0)));
@@ -155,11 +161,15 @@ bool AIApplication::startup()
 
 		m_agents.back()->setObstacle(&m_obstacles);
 
+		m_agents.back()->setFountains(&m_fountains);
+
 		m_agents.back()->getActions().push_back(new Wander());
 
 		m_agents.back()->getActions().push_back(new Flee());
 
 		m_agents.back()->getActions().push_back(new Heal());
+
+		m_agents.back()->getActions().push_back(new GoToFountain());
 
 		m_agents.back()->getTActions().push_back(new BasicMelee());
 
@@ -168,6 +178,10 @@ bool AIApplication::startup()
 		m_agents.back()->getTActions().push_back(new BasicRange());
 
 	}
+
+	m_fountains.push_back(Fountain(vec3(size / 2, 0, size / 2)));
+
+	m_pathGraph->removeNodeAt(m_fountains.front().position, m_fountains.front().radius);
 
 	return true;
 }
@@ -194,6 +208,11 @@ void AIApplication::update(float dt)
 
 	float speed = 2.5f;
 
+	for (auto& fountain : m_fountains)
+	{
+		fountain.update(m_agents, dt);
+	}
+
 	for (auto& obstacle : m_obstacles)
 	{
 		glm::vec3 pos = obstacle.position;
@@ -207,44 +226,7 @@ void AIApplication::update(float dt)
 		Gizmos::addAABB(m_agents[i]->getPostion(), vec3(m_agents[i]->getRadius()), m_agents[i]->getColour());
 	}
 	
-	if (aie::Input::getInstance()->isKeyDown(aie::INPUT_KEY_LEFT))
-	{
-		m_testGizmo.z -= speed * dt;
-	}
-	else if (aie::Input::getInstance()->isKeyDown(aie::INPUT_KEY_RIGHT))
-	{
-		m_testGizmo.z += speed * dt;
-	}
-
-	if (aie::Input::getInstance()->isKeyDown(aie::INPUT_KEY_UP))
-	{
-		m_testGizmo.x += speed * dt;
-	}
-	else if (aie::Input::getInstance()->isKeyDown(aie::INPUT_KEY_DOWN))
-	{
-		m_testGizmo.x -= speed * dt;
-	}
 	
-	if (aie::Input::getInstance()->isKeyDown(aie::INPUT_KEY_F))
-	{
-		m_pathGraph->removeNodeAt(m_testGizmo, 0.5f);
-	}
-
-	if (aie::Input::getInstance()->wasKeyPressed(aie::INPUT_KEY_G))
-	{
-		std::vector<Node*> nearbyConnections;
-
-		m_pathGraph->getNodesInRadius(nearbyConnections, m_testGizmo, 1.1f);
-
-		Node* node = m_pathGraph->addNode(m_testGizmo);		
-
-		for (auto& nodeToAdd : nearbyConnections)
-		{
-			m_pathGraph->addConnection(node, nodeToAdd);
-			m_pathGraph->addConnection(nodeToAdd, node);
-		}
-	}
-
 
 	for (auto& node : m_pathGraph->getNodeList())
 	{
@@ -256,16 +238,6 @@ void AIApplication::update(float dt)
 	}
 
 
-
-	//for (int i = 0; i < 21; ++i) 
-	//{
-	//	Gizmos::addLine(vec3(-10 + i, 0, 10),
-	//		vec3(-10 + i, 0, -10),
-	//		i == 10 ? white : black);
-	//	Gizmos::addLine(vec3(10, 0, -10 + i),
-	//		vec3(-10, 0, -10 + i),
-	//		i == 10 ? white : black);
-	//}
 }
 
 void AIApplication::draw()
