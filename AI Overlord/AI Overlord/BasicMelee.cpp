@@ -8,7 +8,7 @@ BasicMelee::BasicMelee()
 	m_cost = 0;
 	m_attackRange = 1.f;
 	m_damageMultiplier = 2.0f;
-	m_coolDown = 1.f;
+	m_CD = 1.f;
 	m_CDTimer = 0;
 	m_castTime = 0.1f;
 	m_castTimer = 0;

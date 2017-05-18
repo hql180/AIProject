@@ -20,11 +20,14 @@ float Flee::evaluate(Agent * agent, float dt)
 	{
 		float hScore = 0;
 		for (auto& hostile : agent->getHostiles())
+		{
 			hScore += glm::max((hostile->getHealthPercentage() - agent->getHealthPercentage()), 0.f);
-
+			hScore = hScore + glm::max(glm::length(hostile->getPostion() - agent->getPostion()) - agent->getPreferedRange(), 0.f) * hostile->getHealthPercentage();
+		}
+		
 		//hScore /= agent->getHostiles().size();
 
-		score = 2.f * score * hScore;
+		score = 2.f * score + hScore;
 	}
 	else
 	{

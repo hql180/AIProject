@@ -7,7 +7,7 @@ BasicMagic::BasicMagic()
 	m_cost = 20.f;
 	m_attackRange = 7.f;
 	m_damageMultiplier = 2.f;
-	m_coolDown = 5.f;
+	m_CD = 5.f;
 	m_CDTimer = 0;
 	m_castTime = 1.55f;
 	m_castTimer = 0;

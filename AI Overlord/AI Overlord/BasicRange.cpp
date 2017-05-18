@@ -8,7 +8,7 @@ BasicRange::BasicRange()
 	m_cost = 0;
 	m_attackRange = 8.f;
 	m_damageMultiplier = 1.5f;
-	m_coolDown = 1.35f;
+	m_CD = 1.35f;
 	m_CDTimer = 0;
 	m_castTime = 0.35f;
 	m_castTimer = 0;

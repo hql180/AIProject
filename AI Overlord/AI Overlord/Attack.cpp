@@ -54,7 +54,7 @@ void Attack::finishAttack(Agent * agent)
 	agent->subMana(m_cost);
 	m_isCasting = false;
 	m_castTimer = 0;
-	m_CDTimer = m_coolDown;
+	m_CDTimer = m_CD;
 
 	if (!agent->contains(agent->getTarget()->getHostiles(), agent))
 	{
@@ -67,7 +67,6 @@ void Attack::seekTarget(Agent * agent, float dt)
 
 	if (needNewPath(agent))
 	{
-		//m_thread = new std::thread([&]() { generatePath(agent, agent->getTarget()->getPostion()); });
 		generatePath(agent, agent->getTarget()->getPostion());
 	}
 

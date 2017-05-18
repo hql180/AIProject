@@ -35,7 +35,7 @@ protected:
 	float m_radius;
 	float m_projectileSpeed;
 	float m_damageMultiplier;
-	float m_coolDown;
+	float m_CD;
 	float m_CDTimer;
 	float m_castTime;
 	float m_castTimer;

@@ -8,23 +8,27 @@
 
 std::random_device rd1;
 std::mt19937 gen1(rd1());
-std::uniform_int_distribution<int> dis1(0, 40);
+std::uniform_int_distribution<int> dis1(0, 20);
 
 Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f)
 {
 }
 
-Agent::Agent(glm::vec3 & pos, PathGraph* graph, glm::vec4& colour) : m_postion(pos), m_pathGraph(graph), m_colour(colour), m_velocity(0), m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f), m_moveSpeed(5.f)
+Agent::Agent(glm::vec3 & pos, PathGraph* graph, glm::vec4& colour, glm::vec3& forwardDir) : m_postion(pos), m_pathGraph(graph), m_colour(colour), m_velocity(0), m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f), m_moveSpeed(5.f)
 {
 	m_FOV = 0.698132f;
 	m_visionRange = 10.f;
 	m_radius = 0.5f;
+
+	m_dir = glm::normalize(forwardDir);
 
 	m_maxMana = m_stats.intelligence * 10.f;
 	m_mana = m_maxMana;
 
 	m_maxHealth = m_stats.strength * 4.f + m_stats.vitality *8.f;
 	m_health = m_maxHealth;
+
+	m_preferedRange = 5.f;
 }
 
 Agent::~Agent()
@@ -57,29 +61,42 @@ bool Agent::inVisionRange(Agent * agent)
 
 bool Agent::inLineOfSight(Agent * target)
 {
-	if (getAngleToTarget(target) <= m_FOV)
-	{
+	/*if (getAngleToTarget(target) <= m_FOV)
+	{*/
 		glm::vec3 dirToTarget = glm::normalize(target->getPostion() - m_postion);
+		glm::vec3 sideWays = glm::vec3(dirToTarget.z, 0, -dirToTarget.x);
+		sideWays = glm::normalize(sideWays); // sideways horizontal unit vector
+
 		for (auto& obs : *m_obstacles)
 		{
 			glm::vec3 vecToObs = obs.position - m_postion;
-			if (glm::length(obs.position - m_postion) <= m_visionRange + obs.radius)
+			float forwardDistance = glm::dot(dirToTarget, vecToObs);
+			if (forwardDistance > 0 && forwardDistance < m_visionRange)
 			{
-				float projScalar = glm::clamp((glm::dot(dirToTarget, vecToObs)), 0.f, glm::length(obs.position - m_postion));
+				float sidewaysDistance = fabs(glm::dot(sideWays, vecToObs));
 
-				glm::vec3 projectedPos = m_postion + projScalar * dirToTarget;
-
-				if (glm::length(projectedPos - obs.position) <= obs.radius)
+				if (sidewaysDistance <= obs.radius)
+				{
 					return false;
-			}
-		}
-		
-	}
+					/*float projScalar = glm::clamp(glm::dot(dirToTarget, vecToObs), 0.f, glm::length(obs.position - m_postion));
 
-	return true;
+					glm::vec3 projectedPos = m_postion + projScalar * dirToTarget;
+
+					if (glm::length(projectedPos - obs.position) <= obs.radius)
+					{
+
+					}*/
+
+				}
+			}
+		}	
+		return true;
+	//}
+
+	//return false;
 }
 
-bool Agent::inLineOfSight(float angle)
+bool Agent::inFOV(float angle)
 {
 	return (angle <= m_FOV);
 }
@@ -154,12 +171,17 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 {
 	m_allAgents = agentList;
 
+	if (glm::length(m_velocity) != 0)
+	{
+		m_dir = glm::normalize(m_velocity);
+	}
+
 	if (m_health <= 0)
 		respawn(this, dt);
 	// loops through all other agents
 	for (auto& agent : agentList)
 	{
-		if (agent != this && inVisionRange(agent) && inLineOfSight(agent))
+		if (agent != this && inVisionRange(agent) && inFOV(getAngleToTarget(agent)) && inLineOfSight(agent))
 		{
 			if (!contains(m_actionableHostiles, agent))
 			{
@@ -170,14 +192,14 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 
 	for (int i = m_actionableHostiles.size() - 1; i >= 0; --i)
 	{
-		if (!inVisionRange(m_actionableHostiles[i]))
+		if (!inVisionRange(m_actionableHostiles[i]) || !inLineOfSight(m_actionableHostiles[i]))
 		{
 			if (m_actionableHostiles[i] == m_currentTarget)
 				m_currentTarget == nullptr;
 			m_actionableHostiles.erase(m_actionableHostiles.begin() + i);
 		}
 	}
-	glm::vec3 vision = glm::normalize(m_velocity)*m_visionRange;
+	glm::vec3 vision = m_dir * m_visionRange;
 	//aie::Gizmos::addArcRing(m_postion, 0, m_visionRange * 0.95f, m_visionRange, 4, 20, m_colour);
 	aie::Gizmos::addLine(m_postion, vision + m_postion, m_colour);
 	aie::Gizmos::addLine(m_postion, glm::vec3(vision.x * cosf(m_FOV) + vision.z * sinf(m_FOV), 0, -vision.x * sinf(m_FOV) + vision.z * cosf(m_FOV)) + m_postion, m_colour);
@@ -211,6 +233,11 @@ float Agent::getCurrentHealth()
 float Agent::getHealthPercentage()
 {
 	return m_health/(m_maxHealth);
+}
+
+void Agent::addHealth(float amount)
+{
+	m_health += amount;
 }
 
 float Agent::getAttackDamage()
@@ -249,13 +276,18 @@ void Agent::checkDistanceToTarget()
 // Calculates angle from agent's forward velocity to target using dot product
 float Agent::getAngleToTarget(Agent * target)
 {
-	return acosf(glm::dot(glm::normalize(m_velocity), glm::normalize(target->getPostion() - m_postion)));
+	return acosf(glm::dot(m_dir, glm::normalize(target->getPostion() - m_postion)));
 }
 
 
 float Agent::getMoveSpeed()
 {
 	return m_moveSpeed;
+}
+
+void Agent::setMoveSpeed(float speed)
+{
+	m_moveSpeed = speed;
 }
 
 void Agent::updateMovement(float dt)
@@ -358,6 +390,16 @@ glm::vec3 Agent::getDirectionToTarget(Agent * from, Agent * to)
 	return glm::normalize(to->getPostion() - from->getPostion());
 }
 
+glm::vec3 Agent::getForwardDir()
+{
+	return m_dir;
+}
+
+Stats & Agent::getStats()
+{
+	return m_stats;
+}
+
 float Agent::getRadius()
 {
 	return m_radius;
@@ -366,6 +408,11 @@ float Agent::getRadius()
 float Agent::getVisionRange()
 {
 	return m_visionRange;
+}
+
+float Agent::getPreferedRange()
+{
+	return m_preferedRange;
 }
 
 void Agent::setObstacle(std::vector<Obstacle>* obs)

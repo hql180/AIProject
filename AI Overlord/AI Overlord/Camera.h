@@ -4,7 +4,7 @@
 class Camera
 {
 public:
-	Camera() : theta(0), phi(-20), position(-10, 4, 0) {}
+	Camera() : theta(-90), phi(-20), position(5, 4, 20) {}
 	~Camera();
 
 	glm::mat4 getProjectionMatrix(float w, float h);

@@ -19,7 +19,7 @@ class Agent
 {
 public:
 	Agent();
-	Agent(glm::vec3& pos, PathGraph* graph, glm::vec4& colour);
+	Agent(glm::vec3& pos, PathGraph* graph, glm::vec4& colour, glm::vec3& forwardDir = glm::vec3(1, 0, 0));
 	~Agent();
 
 	glm::vec3 getPostion();
@@ -32,7 +32,7 @@ public:
 
 	bool inLineOfSight(Agent* target);
 
-	bool inLineOfSight(float angle);
+	bool inFOV(float angle);
 
 	Action* getBestAction(float dt); 
 
@@ -43,6 +43,8 @@ public:
 	float getCurrentHealth();
 
 	float getHealthPercentage();
+
+	void addHealth(float amount);
 
 	float getAttackDamage();
 
@@ -61,6 +63,8 @@ public:
 	float getAngleToTarget(Agent* target);
 
 	float getMoveSpeed();
+
+	void setMoveSpeed(float speed);
 
 	void updateMovement(float dt);
 
@@ -97,9 +101,15 @@ public:
 
 	glm::vec3 getDirectionToTarget(Agent* from, Agent* to);
 
+	glm::vec3 getForwardDir();
+
+	Stats& getStats();
+
 	float getRadius();
 
 	float getVisionRange();
+
+	float getPreferedRange();
 
 	void setObstacle(std::vector<Obstacle>* obs);
 
@@ -108,6 +118,7 @@ public:
 protected:
 	glm::vec3 m_postion;
 	glm::vec3 m_velocity;
+	glm::vec3 m_dir;
 	glm::vec3 m_rotation;
 
 	float m_radius;

@@ -25,7 +25,7 @@ void Wander::enter(Agent * agent, float dt)
 	glm::vec3 target = glm::vec3(0);
 	if (glm::length(agent->getVelocity()) != 0)
 	{
-		target = agent->getPostion() + glm::normalize(agent->getVelocity());		
+		target = agent->getPostion() + agent->getForwardDir();;
 	}
 	glm::vec3 displacement = glm::normalize(glm::vec3(dis(gen), 0, dis(gen)));
 
