@@ -6,34 +6,61 @@
 #include <iostream>
 #include <random>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 std::random_device rd1;
 std::mt19937 gen1(rd1());
-std::uniform_int_distribution<int> dis1(0, 20);
+std::uniform_int_distribution<int> dis1(0, 40);
 
-Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f)
+Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr)
 {
 }
 
-Agent::Agent(glm::vec3 & pos, PathGraph* graph, glm::vec4& colour, glm::vec3& forwardDir) : m_postion(pos), m_pathGraph(graph), m_colour(colour), m_velocity(0), m_currentTarget(nullptr), m_currentAction(nullptr), m_actionCD(0.5f), m_moveSpeed(3.f)
+Agent::Agent(glm::vec3& pos, PathGraph* graph, std::vector<Obstacle>* obstacles, std::vector<Fountain>* fountains, glm::vec4& colour, float FOV, float visionRange, float radius, glm::vec3& forwardDir)
+	: m_postion(pos), m_velocity(0), m_dir(forwardDir), m_colour(colour)
 {
-	m_FOV = 0.698132f;
-	m_visionRange = 10.f;
-	m_radius = 0.5f;
+	m_pathGraph = graph;
 
-	m_dir = glm::normalize(forwardDir);
+	m_obstacles = obstacles;
 
-	m_maxMana = m_stats.intelligence * 10.f;
-	m_mana = m_maxMana;
+	m_fountains = fountains;
+	
+	m_radius = radius;
 
-	m_maxHealth = m_stats.strength * 4.f + m_stats.vitality *8.f;
-	m_health = m_maxHealth;
+	m_visionRange = visionRange;
 
-	m_preferedRange = 5.f;
+	m_FOV = (FOV / 2.f * M_PI) / 180.f;
+
+	m_isDead = false;
+
+	m_currentTarget = nullptr;
+
+	m_currentAction = nullptr;
 }
 
 Agent::~Agent()
 {
 }
+
+void Agent::setUp(Stats & stats, float moveSpeed, float preferedRange)
+{
+	m_stats = stats;
+
+	m_moveSpeed = moveSpeed + 0.25f * m_stats.agility + 0.05 * m_stats.strength;
+
+	m_maxHealth = m_stats.strength * 4.f + m_stats.vitality * 10.f;
+	
+	m_health = m_maxHealth;
+
+	m_maxMana  = m_stats.intelligence * 10.f;
+
+	m_mana = m_maxMana;
+
+	m_preferedRange = preferedRange;
+}
+
+
 
 glm::vec3 Agent::getPostion()
 {
@@ -240,7 +267,7 @@ void Agent::addHealth(float amount)
 
 float Agent::getAttackDamage()
 {
-	return m_stats.agility * 0.5f + m_stats.intelligence + m_stats.strength;
+	return m_stats.agility * 0.33f + m_stats.intelligence * 0.5f + m_stats.strength * 0.5f;
 }
 
 void Agent::subMana(float amount)
@@ -261,19 +288,6 @@ float Agent::getCurrentMana()
 float Agent::getManaPercentage()
 {
 	return m_mana/m_maxMana;
-}
-
-float Agent::getDistanceToTarget()
-{
-	return m_distanceToTarget;
-}
-
-void Agent::checkDistanceToTarget()
-{
-	if (m_currentTarget)
-	{
-		m_distanceToTarget = glm::length(m_postion - m_currentTarget->getPostion());
-	}
 }
 
 // Calculates angle from agent's forward velocity to target using dot product

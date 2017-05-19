@@ -20,8 +20,13 @@ class Agent
 {
 public:
 	Agent();
-	Agent(glm::vec3& pos, PathGraph* graph, glm::vec4& colour, glm::vec3& forwardDir = glm::vec3(1, 0, 0));
+	Agent(glm::vec3& pos, PathGraph* graph, std::vector<Obstacle>* obstacles, std::vector<Fountain>* fountains, 
+			glm::vec4& colour, float FOV = 100.f, float visionRange = 12.f, float radius = 1.f, glm::vec3& forwardDir = glm::vec3(1, 0, 0));
 	~Agent();
+
+	void setUp(Stats& stats, float moveSpeed = 1.f, float preferedRange = 0.f);
+
+
 
 	glm::vec3 getPostion();
 
@@ -58,10 +63,6 @@ public:
 	float getCurrentMana();
 
 	float getManaPercentage();
-
-	float getDistanceToTarget();
-
-	void checkDistanceToTarget();
 
 	float getAngleToTarget(Agent* target);
 
@@ -126,13 +127,10 @@ protected:
 	glm::vec3 m_postion;
 	glm::vec3 m_velocity;
 	glm::vec3 m_dir;
-	glm::vec3 m_rotation;
+	glm::vec4 m_colour;
+	Stats m_stats;
 
 	float m_radius;
-
-	glm::vec4 m_colour;
-
-	Stats m_stats;
 
 	float m_moveSpeed;
 
@@ -140,14 +138,17 @@ protected:
 
 	float m_maxMana, m_mana;
 
-	// Will to try to stay this many units from target
 	float m_preferedRange;
 
 	float m_visionRange, m_FOV;
 
-	float m_actionCD;
+	bool m_isDead;
 
-	float m_distanceToTarget;
+	Agent* m_currentTarget;
+
+	Action* m_currentAction;
+
+	float m_currentActionScore;
 
 	PathGraph* m_pathGraph;
 
@@ -160,11 +161,5 @@ protected:
 
 	std::vector<Obstacle>* m_obstacles;
 	std::vector<Fountain>* m_fountains;
-
-	Agent* m_currentTarget;
-
-	Action* m_currentAction;
-	float m_currentActionScore;
-
 };
 

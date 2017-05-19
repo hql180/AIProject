@@ -37,5 +37,6 @@ private:
 	
 	std::vector<Agent*> m_agents;
 
+	Agent* m_agent;
 };
 

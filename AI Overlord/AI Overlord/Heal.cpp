@@ -7,7 +7,7 @@ Heal::Heal()
 	m_cost = 20.f;
 	m_attackRange = 0.f;
 	m_damageMultiplier = 1.f;
-	m_CD = 8.f;
+	m_CD = 10.f;
 	m_CDTimer = 0;
 	m_castTime = 3.f;
 	m_castTimer = 0;
@@ -53,13 +53,13 @@ void Heal::updateAction(Agent * agent, float dt)
 	}
 	else 
 	{
-		m_castTimer += dt;
+		m_castTimer += (dt * (1.f + agent->getStats().agility * 0.01f));
 
-		agent->addHealth(agent->getStats().vitality * m_damageMultiplier * dt);
+		agent->addHealth(agent->getStats().vitality * m_damageMultiplier * (dt * (1.f + agent->getStats().agility * 0.01f)));
 
 		aie::Gizmos::addRing(agent->getPostion(), agent->getRadius() * 0.7f, agent->getRadius() * 1.3f, 10, glm::vec4(.2, .7, .4, 1));
 
-		if (m_castTimer > m_castTime || agent->getHealthPercentage() > 1)
+		if (m_castTimer > m_castTime || agent->getHealthPercentage() > 1.f)
 		{
 			exit(agent, dt);
 		}

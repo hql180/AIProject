@@ -5,6 +5,10 @@
 
 const float deg2Rad = 3.14159f / 180.0f;
 
+Camera::Camera(glm::vec3 pos, float t, float p) : position(pos), theta(t), phi(p)
+{
+}
+
 Camera::~Camera()
 {
 }

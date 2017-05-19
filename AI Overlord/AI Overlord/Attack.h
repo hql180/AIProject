@@ -1,7 +1,5 @@
 #pragma once
 #include "Action.h"
-#include <thread>
-#include <mutex>
 
 // Attack is attached to agents being attacked 
 class Attack : public Action
@@ -25,8 +23,6 @@ public:
 
 	void seekTarget(Agent* agent, float dt);
 
-	std::thread* m_thread = NULL;
-
 protected:	
 	bool needNewPath(Agent* agent);
 
@@ -45,7 +41,7 @@ protected:
 
 	float checkCoolDown(Agent* agent);
 	float checkMana(Agent* agent);
-	float checkDPS(Agent* agent);
+	float checkDamage(Agent* agent);
 
 };
 

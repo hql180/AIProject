@@ -13,7 +13,7 @@ GoToFountain::~GoToFountain()
 
 float GoToFountain::evaluate(Agent * agent, float dt)
 {
-	if(agent->getHealthPercentage() < .3f || agent->getManaPercentage() < .3f)
+	if(agent->getHealthPercentage() < .4f || agent->getManaPercentage() < .4f)
 	{
 		float score = 0.5f - (0.5f *  (1.f - agent->getHealthPercentage() + 0.01f)) + 0.5f - (0.5f *  (1.f - agent->getManaPercentage() + 0.01f));
 
@@ -62,11 +62,11 @@ void GoToFountain::exit(Agent * agent, float dt)
 void GoToFountain::updateAction(Agent * agent, float dt)
 {
 	aie::Gizmos::addRing(m_closestFountain->position, m_closestFountain->effectRadius, m_closestFountain->effectRadius + 0.2f, 10, agent->getColour());
-	if (glm::length(agent->getPostion() - m_closestFountain->position) > m_closestFountain->effectRadius)
+	if (glm::length(agent->getPostion() - m_closestFountain->position) > m_closestFountain->effectRadius - agent->getRadius())
 	{
 		followPath(agent, dt);
 	}
-	else if (agent->getHealthPercentage() > .95f && agent->getManaPercentage() > .95f)
+	if (agent->getHealthPercentage() > .95f && agent->getManaPercentage() > .95f)
 	{
 		exit(agent, dt);
 	}

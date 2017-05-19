@@ -92,7 +92,7 @@ float Attack::checkMana(Agent * agent)
 	return (agent->getCurrentMana() >= m_cost) ? 1.0f : 0.f;
 }
 
-float Attack::checkDPS(Agent * agent)
+float Attack::checkDamage(Agent * agent)
 {
 	float damage = agent->getAttackDamage() * m_damageMultiplier;
 	return (m_castTime >= 1) ? damage / m_castTime + damage : damage * m_castTime + damage;

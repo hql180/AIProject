@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <random>
 
+#include "imgui_glfw3.h"
+#include "imgui\imgui.h"
 #include "Gizmos.h"
 #include "Input.h"
 #include "PathFinder.h"
@@ -18,11 +20,12 @@
 #include "Charge.h"
 #include "Heal.h"
 #include "GoToFountain.h"
+#include "UI.h"
 
 using namespace aie;
 using namespace glm;
 
-int size = 20;
+int size = 40;
 
 std::random_device rd2;
 std::mt19937 gen2(rd2());
@@ -56,20 +59,10 @@ bool AIApplication::startup()
 		}
 	}
 
-	int breaks = 5;
-
-	for (int x = 0; x < 5; ++x)
+	for (int x = 0; x < 10; ++x)
 	{
-		////(x == 0 || x == 9)
-		//if (x % 5 == 0) 
-		//{
-
-		//}
-		//else
-		//{
 		m_obstacles.push_back(Obstacle());
 		m_obstacles.back().position = vec3(dis2(gen2), 0, dis2(gen2));
-		//m_obstacles.back().position = vec3(size/2 , 0, x);
 		m_obstacles.back().shape = Shape::Box;
 		if ( false && x % 5 == 0)
 		{
@@ -83,26 +76,16 @@ bool AIApplication::startup()
 			m_obstacles.back().radius = 1.5f;
 			m_pathGraph->removeNodeAt(m_obstacles.back().position, 1.5f);
 		}
-		//}
+
 	}
 
-	//for (int x = 0; x < size; ++x)
-	//{
-	//	if (x % breaks == 0)
-	//	{
+	m_fountains.push_back(Fountain(vec3(size / 2, 0, size / 2)));
 
-	//	}
-	//	else
-	//	{
-	//		m_obstacles.push_back(Obstacle());
-	//		//m_obstacles.back().position = vec3(dis2(gen2), 0, dis2(gen2));
-	//		m_obstacles.back().position = vec3(x, 0, size / 2);
-	//		m_obstacles.back().shape = Shape::Box;
-	//		m_obstacles.back().extent = vec3(1);
-	//		m_obstacles.back().radius = 0.5f;
-	//		m_pathGraph->removeNodeAt(m_obstacles.back().position, 0.5f);
-	//	}
-	//}
+	m_pathGraph->removeNodeAt(m_fountains.back().position, m_fountains.back().radius);
+
+	//m_fountains.push_back(Fountain(vec3(3, 0, 6)));
+
+	//m_pathGraph->removeNodeAt(m_fountains.back().position, m_fountains.back().radius);
 
 	for (auto& node : m_pathGraph->getNodeList())
 	{
@@ -117,11 +100,12 @@ bool AIApplication::startup()
 		}
 	}
 
-	m_agents.push_back(new Agent(vec3(20, 0, 20), m_pathGraph, vec4(.3, .7, 1, 1)));
 
-	m_agents.back()->setObstacle(&m_obstacles);
+	m_agent = new Agent(vec3(20, 0, 20), m_pathGraph, &m_obstacles, &m_fountains, vec4(.3, .7, 1, 1));
 
-	m_agents.back()->setFountains(&m_fountains);
+	m_agents.push_back(m_agent);
+
+	m_agents.back()->setUp(Stats());
 
 	m_agents.back()->getActions().push_back(new Wander());
 
@@ -134,8 +118,6 @@ bool AIApplication::startup()
 	m_agents.back()->getTActions().push_back(new BasicMelee());
 
 	//m_agents.back()->getTActions().push_back(new BasicMagic());
-
-	m_agents.back()->getTActions().push_back(new BasicRange());
 
 	m_agents.back()->getTActions().push_back(new Charge());
 
@@ -156,12 +138,10 @@ bool AIApplication::startup()
 	//m_agents.back()->getTActions().push_back(new BasicRange());
 
 	for (int i = 0; i < 2; ++i)
-	{
-		m_agents.push_back(new Agent(vec3(i % 3, 0, i % 7), m_pathGraph, vec4(i % 2, i % 3, i % 4, 1)));
+	{		
+		m_agents.push_back(new Agent(vec3(i % 3, 0, i % 7), m_pathGraph, &m_obstacles, &m_fountains, vec4(i % 2, i % 3, i % 4, 1)));
 
-		m_agents.back()->setObstacle(&m_obstacles);
-
-		m_agents.back()->setFountains(&m_fountains);
+		m_agents.back()->setUp(Stats(), 1, 6.f);
 
 		m_agents.back()->getActions().push_back(new Wander());
 
@@ -171,17 +151,13 @@ bool AIApplication::startup()
 
 		m_agents.back()->getActions().push_back(new GoToFountain());
 
-		m_agents.back()->getTActions().push_back(new BasicMelee());
-
 		m_agents.back()->getTActions().push_back(new BasicMagic());
 
 		m_agents.back()->getTActions().push_back(new BasicRange());
 
 	}
 
-	m_fountains.push_back(Fountain(vec3(size / 2, 0, size / 2)));
-
-	m_pathGraph->removeNodeAt(m_fountains.front().position, m_fountains.front().radius);
+	m_camera = Camera(vec3(size/2, size / 3, size * 1.5f), -90);
 
 	return true;
 }
@@ -200,6 +176,12 @@ void AIApplication::update(float dt)
 		dt = 1.f;
 
 	m_camera.update();
+		
+	//static bool show = true;
+
+	////m_UI.run(&show);
+
+	////UI::run(&show);
 
 	Gizmos::clear();
 	vec4 white(1);
@@ -236,6 +218,7 @@ void AIApplication::update(float dt)
 			Gizmos::addLine(node->position, edgeConnection.connectedNode->position, black);
 		}
 	}
+
 
 
 }
