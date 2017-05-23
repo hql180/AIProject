@@ -1,19 +1,16 @@
 #pragma once
-#include "Action.h"
-class Wander :
-	public Action
+#include "Attack.h"
+class StrongMelee :
+	public Attack
 {
 public:
-	Wander();
-	~Wander();
+	StrongMelee();
+	~StrongMelee();
 
 	virtual float evaluate(Agent* agent, float dt);
 	virtual void enter(Agent* agent, float dt);
 	virtual void exit(Agent* agent, float dt);
 	virtual void updateAction(Agent* agent, float dt);
 	virtual void updateTimer(float dt);
-
-protected:
-	float m_helper;
 };
 

@@ -13,11 +13,15 @@ GoToFountain::~GoToFountain()
 
 float GoToFountain::evaluate(Agent * agent, float dt)
 {
-	if(agent->getHealthPercentage() < .4f || agent->getManaPercentage() < .4f)
+	if(agent->getHealthPercentage() < .45f || agent->getManaPercentage() < .45f)
 	{
 		float score = 0.5f - (0.5f *  (1.f - agent->getHealthPercentage() + 0.01f)) + 0.5f - (0.5f *  (1.f - agent->getManaPercentage() + 0.01f));
 
-		printf("go fountain score: %f \n", score); //Debug
+		if (agent->getManaPercentage() < 0.1f)
+		{
+			score += 1.f;
+		}
+		//printf("go fountain score: %f \n", score); //Debug
 
 		return score;
 	}

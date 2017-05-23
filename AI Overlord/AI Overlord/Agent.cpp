@@ -34,6 +34,8 @@ Agent::Agent(glm::vec3& pos, PathGraph* graph, std::vector<Obstacle>* obstacles,
 
 	m_isDead = false;
 
+	m_showDamage = 0;
+
 	m_currentTarget = nullptr;
 
 	m_currentAction = nullptr;
@@ -88,39 +90,26 @@ bool Agent::inVisionRange(Agent * agent)
 
 bool Agent::inLineOfSight(Agent * target)
 {
-	/*if (getAngleToTarget(target) <= m_FOV)
-	{*/
-		glm::vec3 dirToTarget = glm::normalize(target->getPostion() - m_postion);
-		glm::vec3 sideWays = glm::vec3(dirToTarget.z, 0, -dirToTarget.x);
-		sideWays = glm::normalize(sideWays); // sideways horizontal unit vector
 
-		for (auto& obs : *m_obstacles)
+	glm::vec3 dirToTarget = glm::normalize(target->getPostion() - m_postion);
+	glm::vec3 sideWays = glm::vec3(dirToTarget.z, 0, -dirToTarget.x);
+	sideWays = glm::normalize(sideWays); // sideways horizontal unit vector
+
+	for (auto& obs : *m_obstacles)
+	{
+		glm::vec3 vecToObs = obs.position - m_postion;
+		float forwardDistance = glm::dot(dirToTarget, vecToObs);
+		if (forwardDistance > 0 && forwardDistance < m_visionRange)
 		{
-			glm::vec3 vecToObs = obs.position - m_postion;
-			float forwardDistance = glm::dot(dirToTarget, vecToObs);
-			if (forwardDistance > 0 && forwardDistance < m_visionRange)
+			float sidewaysDistance = fabs(glm::dot(sideWays, vecToObs));
+
+			if (sidewaysDistance <= obs.radius)
 			{
-				float sidewaysDistance = fabs(glm::dot(sideWays, vecToObs));
-
-				if (sidewaysDistance <= obs.radius)
-				{
-					return false;
-					/*float projScalar = glm::clamp(glm::dot(dirToTarget, vecToObs), 0.f, glm::length(obs.position - m_postion));
-
-					glm::vec3 projectedPos = m_postion + projScalar * dirToTarget;
-
-					if (glm::length(projectedPos - obs.position) <= obs.radius)
-					{
-
-					}*/
-
-				}
+				return false;
 			}
-		}	
-		return true;
-	//}
-
-	//return false;
+		}
+	}	
+	return true;
 }
 
 bool Agent::inFOV(float angle)
@@ -180,7 +169,9 @@ Action* Agent::getBestAction(float dt)
 			}
 			m_currentTarget = bestTarget;
 			m_currentActionScore = bestScore;
-			m_currentActionScore *= 1.05f;
+			m_currentActionScore *= 1.2f;
+			if (m_currentAction)
+				m_currentAction->exit(this, dt);
 			bestAction->enter(this, dt);
 		}
 		return bestAction;
@@ -203,6 +194,12 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 		m_dir = glm::normalize(m_velocity);
 	}
 
+	if (m_showDamage > 0)
+	{
+		aie::Gizmos::addRing(m_postion, m_radius * 0.5f, m_radius * 1.5f, 10, glm::vec4(.9, .1, .1, 1));
+		m_showDamage -= dt;
+	}
+
 	if (m_health <= 0)
 		respawn(this, dt);
 	// loops through all other agents
@@ -219,18 +216,21 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 
 	for (int i = m_actionableHostiles.size() - 1; i >= 0; --i)
 	{
-		if (!inVisionRange(m_actionableHostiles[i]) || !inLineOfSight(m_actionableHostiles[i]))
+		if (!inVisionRange(m_actionableHostiles[i])) // || !inLineOfSight(m_actionableHostiles[i])
 		{
 			if (m_actionableHostiles[i] == m_currentTarget)
 				m_currentTarget == nullptr;
 			m_actionableHostiles.erase(m_actionableHostiles.begin() + i);
 		}
 	}
+
 	glm::vec3 vision = m_dir * m_visionRange;
-	//aie::Gizmos::addArcRing(m_postion, 0, m_visionRange * 0.95f, m_visionRange, 4, 20, m_colour);
 	aie::Gizmos::addLine(m_postion, vision + m_postion, m_colour);
 	aie::Gizmos::addLine(m_postion, glm::vec3(vision.x * cosf(m_FOV) + vision.z * sinf(m_FOV), 0, -vision.x * sinf(m_FOV) + vision.z * cosf(m_FOV)) + m_postion, m_colour);
 	aie::Gizmos::addLine(m_postion, glm::vec3(vision.x * cosf(-m_FOV) + vision.z * sinf(-m_FOV), 0, -vision.x * sinf(-m_FOV) + vision.z * cosf(-m_FOV)) + m_postion, m_colour);
+	aie::Gizmos::addAABB(m_postion, glm::vec3(m_radius), m_colour);
+	//aie::Gizmos::addCapsule(m_postion, m_radius, m_radius * 2, 20, 20, m_colour);
+
 
 	m_currentAction = getBestAction(dt);
 
@@ -335,6 +335,7 @@ void Agent::respawn(Agent* agent, float dt)
 
 bool Agent::takeDamage(float damage)
 {
+	m_showDamage = 0.1f;
 	m_health -= damage;
 	return (m_health <= 0) ? true : false;
 }

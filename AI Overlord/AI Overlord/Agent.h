@@ -21,7 +21,7 @@ class Agent
 public:
 	Agent();
 	Agent(glm::vec3& pos, PathGraph* graph, std::vector<Obstacle>* obstacles, std::vector<Fountain>* fountains, 
-			glm::vec4& colour, float FOV = 100.f, float visionRange = 12.f, float radius = 1.f, glm::vec3& forwardDir = glm::vec3(1, 0, 0));
+			glm::vec4& colour, float FOV = 100.f, float visionRange = 15.f, float radius = 1.f, glm::vec3& forwardDir = glm::vec3(1, 0, 0));
 	~Agent();
 
 	void setUp(Stats& stats, float moveSpeed = 1.f, float preferedRange = 0.f);
@@ -141,6 +141,8 @@ protected:
 	float m_preferedRange;
 
 	float m_visionRange, m_FOV;
+
+	float m_showDamage;
 
 	bool m_isDead;
 

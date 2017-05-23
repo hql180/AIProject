@@ -84,13 +84,22 @@
     <ClInclude Include="Heal.h">
       <Filter>Header Files\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="GoToFountain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Fountain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GoToFountain.h">
+      <Filter>Header Files\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="StrongMelee.h">
+      <Filter>Header Files\Actions\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="Snipe.h">
+      <Filter>Header Files\Actions\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="MagicBomb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -146,13 +155,22 @@
     <ClCompile Include="Heal.cpp">
       <Filter>Source Files\Actions</Filter>
     </ClCompile>
-    <ClCompile Include="GoToFountain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Fountain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GoToFountain.cpp">
+      <Filter>Source Files\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="StrongMelee.cpp">
+      <Filter>Source Files\Actions\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Snipe.cpp">
+      <Filter>Source Files\Actions\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="MagicBomb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

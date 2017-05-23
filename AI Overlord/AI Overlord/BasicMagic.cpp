@@ -6,13 +6,13 @@ BasicMagic::BasicMagic()
 {
 	m_cost = 5.f;
 	m_attackRange = 8.f;
-	m_damageMultiplier = 1.5f;
-	m_CD = 2.f;
+	m_damageMultiplier = 2.5f;
+	m_CD = 1.f;
 	m_CDTimer = 0;
-	m_castTime = 1.5f;
+	m_castTime = 2.f;
 	m_castTimer = 0;
-	m_radius = 0.3f;
-	m_projectileSpeed = 4.f;
+	m_radius = 0.8f;
+	m_projectileSpeed = 6.f;
 
 	m_isCasting = false;
 	m_projectTilePool.push_back(Projectile());
@@ -40,11 +40,8 @@ void BasicMagic::enter(Agent * agent, float dt)
 
 void BasicMagic::exit(Agent * agent, float dt)
 {
-	if (m_isCasting)
-	{
-		m_isCasting = false;
-		m_CD *= 1.f - (agent->getStats().intelligence * 0.01);
-	}
+	m_isCasting = false;
+
 	m_castTimer = 0;
 	agent->setCurrentAction(nullptr);
 	m_currentPath.clear();
@@ -52,6 +49,7 @@ void BasicMagic::exit(Agent * agent, float dt)
 
 void BasicMagic::updateAction(Agent * agent, float dt)
 {
+	aie::Gizmos::addRing(agent->getTarget()->getPostion(), 0.2f, 0.3f, 5, agent->getColour());
 	float distance = glm::length(agent->getPostion() - agent->getTarget()->getPostion());
 	if (distance > m_attackRange && !m_isCasting)
 	{
@@ -71,7 +69,7 @@ void BasicMagic::updateAction(Agent * agent, float dt)
 			{
 				if (!projectile.getActive())
 				{
-					projectile.shoot(this, agent, 5.f, 0.2f);
+					projectile.shoot(this, agent, 5.f, 0.5f);
 					
 					break;
 				}

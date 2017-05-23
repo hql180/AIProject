@@ -5,7 +5,7 @@
 Heal::Heal()
 {
 	m_cost = 20.f;
-	m_attackRange = 0.f;
+	m_attackRange = 9.5f;
 	m_damageMultiplier = 1.f;
 	m_CD = 10.f;
 	m_CDTimer = 0;
@@ -23,11 +23,18 @@ Heal::~Heal()
 
 float Heal::evaluate(Agent * agent, float dt)
 {
-	if (m_CDTimer > 0)
+	if (m_CDTimer > 0 || agent->getCurrentMana() < m_cost)
 	{
 		return 0.f;
 	}
-	float score = 1.1f - agent->getHealthPercentage();
+	for (auto& hostile : agent->getHostiles())
+	{
+		if (glm::length(agent->getPostion() - hostile->getPostion()) < m_attackRange)
+		{
+			return 0.f;
+		}
+	}
+	float score = 1.f - agent->getHealthPercentage();
 
 	return score;
 }

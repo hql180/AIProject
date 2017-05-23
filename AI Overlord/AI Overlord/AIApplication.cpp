@@ -20,6 +20,9 @@
 #include "Charge.h"
 #include "Heal.h"
 #include "GoToFountain.h"
+#include "StrongMelee.h"
+#include "Snipe.h"
+#include "MagicBomb.h"
 #include "UI.h"
 
 using namespace aie;
@@ -121,6 +124,8 @@ bool AIApplication::startup()
 
 	m_agents.back()->getTActions().push_back(new Charge());
 
+	m_agents.back()->getTActions().push_back(new StrongMelee());
+
 
 
 	//m_agents.push_back(new Agent(vec3(8, 0, 6), m_pathGraph, vec4(0, 1, 0, 1), vec3(-1, 0, 0)));
@@ -137,9 +142,9 @@ bool AIApplication::startup()
 
 	//m_agents.back()->getTActions().push_back(new BasicRange());
 
-	for (int i = 0; i < 2; ++i)
+	for (int i = 1; i <= 2; ++i)
 	{		
-		m_agents.push_back(new Agent(vec3(i % 3, 0, i % 7), m_pathGraph, &m_obstacles, &m_fountains, vec4(i % 2, i % 3, i % 4, 1)));
+		m_agents.push_back(new Agent(vec3(i % 3 , 0, i % 7), m_pathGraph, &m_obstacles, &m_fountains, vec4(i % 1 / 5.f, i % 2 / 5.f, i % 3 / 5.f, 1)));
 
 		m_agents.back()->setUp(Stats(), 1, 6.f);
 
@@ -150,10 +155,16 @@ bool AIApplication::startup()
 		m_agents.back()->getActions().push_back(new Heal());
 
 		m_agents.back()->getActions().push_back(new GoToFountain());
-
-		m_agents.back()->getTActions().push_back(new BasicMagic());
-
-		m_agents.back()->getTActions().push_back(new BasicRange());
+		if (i == 1)
+		{
+			m_agents.back()->getTActions().push_back(new BasicMagic());
+			m_agents.back()->getTActions().push_back(new MagicBomb());
+		}
+		else
+		{
+			m_agents.back()->getTActions().push_back(new BasicRange());
+			m_agents.back()->getTActions().push_back(new Snipe());
+		}
 
 	}
 
@@ -205,19 +216,18 @@ void AIApplication::update(float dt)
 	for (int i = 0; i < m_agents.size(); ++i)
 	{
 		m_agents[i]->update(m_agents, dt);
-		Gizmos::addAABB(m_agents[i]->getPostion(), vec3(m_agents[i]->getRadius()), m_agents[i]->getColour());
 	}
 	
 	
 
-	for (auto& node : m_pathGraph->getNodeList())
-	{
-		Gizmos::addSphere(node->position, 0.1f, 1, 1, white);
-		for (auto& edgeConnection : node->connections)
-		{
-			Gizmos::addLine(node->position, edgeConnection.connectedNode->position, black);
-		}
-	}
+	//for (auto& node : m_pathGraph->getNodeList())
+	//{
+	//	Gizmos::addSphere(node->position, 0.1f, 1, 1, white);
+	//	for (auto& edgeConnection : node->connections)
+	//	{
+	//		Gizmos::addLine(node->position, edgeConnection.connectedNode->position, black);
+	//	}
+	//}
 
 
 

@@ -54,7 +54,7 @@ void Attack::finishAttack(Agent * agent)
 	agent->subMana(m_cost);
 	m_isCasting = false;
 	m_castTimer = 0;
-	m_CDTimer = m_CD;
+	m_CDTimer = m_CD *1.f - (agent->getStats().intelligence * 0.01);
 
 	if (!agent->contains(agent->getTarget()->getHostiles(), agent))
 	{
@@ -64,15 +64,13 @@ void Attack::finishAttack(Agent * agent)
 
 void Attack::seekTarget(Agent * agent, float dt)
 {
-
 	if (needNewPath(agent))
 	{
 		generatePath(agent, agent->getTarget()->getPostion());
 	}
 
 	aie::Gizmos::addRing(agent->getTarget()->getPostion(), 0.2f, 0.3f, 5, agent->getColour());
-	followPath(agent, dt);
-	
+	followPath(agent, dt);	
 }
 
 bool Attack::needNewPath(Agent* agent)
@@ -94,6 +92,7 @@ float Attack::checkMana(Agent * agent)
 
 float Attack::checkDamage(Agent * agent)
 {
-	float damage = agent->getAttackDamage() * m_damageMultiplier;
-	return (m_castTime >= 1) ? damage / m_castTime + damage : damage * m_castTime + damage;
+	//float damage = agent->getAttackDamage() * m_damageMultiplier;
+	//return (m_castTime >= 1) ? damage / m_castTime + damage : damage * m_castTime + damage;
+	return agent->getAttackDamage() * m_damageMultiplier;
 }

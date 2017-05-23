@@ -3,7 +3,7 @@
 #include "Gizmos.h"
 
 
-Flee::Flee() : m_corneredCounter(5)
+Flee::Flee() : m_corneredCounter(30.f)
 {
 }
 
@@ -14,29 +14,36 @@ Flee::~Flee()
 
 float Flee::evaluate(Agent * agent, float dt)
 {
-	float score =  1.1f - agent->getHealthPercentage();
+	float score =  1.01f - agent->getHealthPercentage();
 
 	if (agent->getHostiles().size() > 0)
 	{
 		float hScore = 0;
 		for (auto& hostile : agent->getHostiles())
 		{
-			hScore += glm::max((hostile->getHealthPercentage() - agent->getHealthPercentage()), 0.f);
-			hScore = hScore + glm::max(glm::length(hostile->getPostion() - agent->getPostion()) - agent->getPreferedRange(), 0.f) * hostile->getHealthPercentage();
-		}
-		
-		//hScore /= agent->getHostiles().size();
+			float healthDifference = hostile->getHealthPercentage() - agent->getHealthPercentage();
+			if (healthDifference > 0)
+			{
+				hScore += healthDifference;
+			}
 
-		score = 2.f * score + hScore;
+			if (glm::length(hostile->getPostion() - agent->getPostion()) < agent->getPreferedRange())
+			{
+				hScore += 1.f * hostile->getHealthPercentage() * (glm::length(hostile->getPostion() - agent->getPostion()) / agent->getPreferedRange());
+			}
+		}
+	
+
+		score = 2.f * score + hScore ;
 	}
 	else
 	{
 		return 0;
 	}
 
-	printf("flee score: %f \n", score * (m_corneredCounter / 5.f)); //Debug
-
-	return score * (m_corneredCounter / 5.f);
+	//printf("flee score: %f \n", score * (m_corneredCounter / 9.f)); //Debug
+	printf("%f \n", score * (m_corneredCounter / 30.f));
+	return (score * (m_corneredCounter / 30.f));
 }
 
 void Flee::enter(Agent * agent, float dt)
@@ -46,8 +53,11 @@ void Flee::enter(Agent * agent, float dt)
 	for (auto& hostile : agent->getHostiles())
 	{
 		//destination = destination + (agent->getDirectionToTarget(hostile, agent) * (agent->getVisionRange() - glm::length(agent->getPostion() - hostile->getPostion())));
-		destination = destination + (agent->getDirectionToTarget(hostile, agent) * agent->getMoveSpeed());
+		destination = destination + (agent->getDirectionToTarget(hostile, agent) * (agent->getVisionRange() / 2.f));
 	}
+
+	if (glm::length(destination - agent->getPostion()) < 3.f)
+		destination = glm::normalize(destination) * (agent->getVisionRange() / 2.f);
 
 	generatePath(agent, destination);
 }
@@ -56,8 +66,10 @@ void Flee::exit(Agent * agent, float dt)
 {
 	if (m_corneredCounter > 0)
 	{
-		m_corneredCounter--;
+		m_corneredCounter -= 10.f;
 	}
+
+	printf("%f", m_corneredCounter);
 
 	agent->setCurrentAction(nullptr);
 }
@@ -67,7 +79,7 @@ void Flee::updateAction(Agent * agent, float dt)
 	if (m_currentPath.size() > 0)
 	{
 		aie::Gizmos::addRing(m_currentPath.back()->position, 0.2f, 0.3f, 5, agent->getColour());
-		followPath(agent, dt);		
+		followPath(agent, dt * (1.f + agent->getStats().agility * 0.02f));
 	}
 	else
 	{
@@ -77,11 +89,11 @@ void Flee::updateAction(Agent * agent, float dt)
 
 void Flee::updateTimer(float dt)
 {
-	if (m_corneredCounter < 5)
+	if (m_corneredCounter < 9)
 	{
 		m_corneredCounter += dt;
-		if (m_corneredCounter > 5)
-			m_corneredCounter = 5;
+		if (m_corneredCounter > 9)
+			m_corneredCounter = 9;
 	}
 }
 

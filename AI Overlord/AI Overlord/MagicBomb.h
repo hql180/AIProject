@@ -1,11 +1,11 @@
-#pragma once
-#include "Action.h"
-class Wander :
-	public Action
+
+#include "Attack.h"
+class MagicBomb :
+	public Attack
 {
 public:
-	Wander();
-	~Wander();
+	MagicBomb();
+	~MagicBomb();
 
 	virtual float evaluate(Agent* agent, float dt);
 	virtual void enter(Agent* agent, float dt);
@@ -14,6 +14,9 @@ public:
 	virtual void updateTimer(float dt);
 
 protected:
-	float m_helper;
-};
+	std::vector<Projectile> m_projectTilePool;
 
+	bool m_bombReleased;
+
+	float m_baseDamage;
+};
