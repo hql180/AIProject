@@ -103,7 +103,6 @@ bool AIApplication::startup()
 		}
 	}
 
-
 	m_agent = new Agent(vec3(20, 0, 20), m_pathGraph, &m_obstacles, &m_fountains, vec4(.3, .7, 1, 1));
 
 	m_agents.push_back(m_agent);
@@ -188,11 +187,12 @@ void AIApplication::update(float dt)
 
 	m_camera.update();
 		
-	//static bool show = true;
+	static bool show = true;
 
-	////m_UI.run(&show);
 
-	////UI::run(&show);
+	UI::run(&show, this);
+
+
 
 	Gizmos::clear();
 	vec4 white(1);

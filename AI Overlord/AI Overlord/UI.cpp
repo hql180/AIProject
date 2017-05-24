@@ -14,12 +14,11 @@ UI::~UI()
 {
 }
 
-void UI::run(bool* open, Agent* agent, AIApplication* app)
+void UI::run(bool* open, AIApplication* app)
 {
 	ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
 	
-	showUI(open, agent, app);
-
+	showUI(open, app);
 }
 
 void UI::showHelp()
@@ -44,7 +43,7 @@ void UI::showHelp()
 		"  Use +- to subtract.\n");
 }
 
-void UI::showUI(bool * open, Agent* agent, AIApplication* app)
+void UI::showUI(bool * open, AIApplication* app)
 {	
 	static bool show_menu = false;
 
@@ -96,9 +95,103 @@ void UI::showUI(bool * open, Agent* agent, AIApplication* app)
 		showHelp();
 	}
 
+	static bool pointsAvailable = true;
+	static int availablePoints = 5;
+
 	if (ImGui::CollapsingHeader("Character"))
 	{
+		ImGui::Text("Character Stats");
+
+		static Stats tempStats;
+
+		if(pointsAvailable)
+		{
+			tempStats = app->m_agent->getStats();
+			availablePoints = 5;
+			pointsAvailable = false;
+		}
+		float str = tempStats.strength;
+		float inte = tempStats.intelligence;
+		float agi = tempStats.agility;
+		float vit = tempStats.vitality;
 		
+		ImGui::PushItemWidth(200);
+		ImGui::SliderInt("Available Points", &availablePoints, availablePoints, availablePoints);
+		ImGui::InputFloat("Strength", &str, 1.0f, 0, 0);
+		ImGui::InputFloat("Intelligence", &inte, 1.0f, 1.0f, 0);
+		ImGui::InputFloat("Agililty", &agi, 1.0f, 1.0f, 0);
+		ImGui::InputFloat("Vitality", &vit, 1.0f, 1.0f, 0);
+
+
+		if (str > tempStats.strength && availablePoints > 0)
+		{
+			tempStats.strength = str;
+			--availablePoints;
+		}
+
+		if (inte > tempStats.intelligence && availablePoints > 0)
+		{
+			tempStats.intelligence = inte;
+			--availablePoints;
+		}
+
+		if (agi > tempStats.agility && availablePoints > 0)
+		{
+			tempStats.agility = agi;
+			--availablePoints;
+		}
+
+		if (vit > tempStats.vitality && availablePoints > 0)
+		{
+			tempStats.vitality = vit;
+			--availablePoints;
+		}
+
+		if (str < app->m_agent->getStats().strength)
+			str = app->m_agent->getStats().strength;
+
+		if (inte < app->m_agent->getStats().intelligence)
+			inte = app->m_agent->getStats().intelligence;
+
+		if (agi < app->m_agent->getStats().agility)
+			agi = app->m_agent->getStats().agility;
+
+		if (vit < app->m_agent->getStats().vitality)
+			vit = app->m_agent->getStats().vitality;
+
+		if (str < tempStats.strength)
+		{		
+			tempStats.strength = str;
+			++availablePoints;
+		}
+
+		if (inte < tempStats.intelligence)
+		{
+			tempStats.intelligence = inte;
+			++availablePoints;
+		}
+
+		if (agi < tempStats.agility)
+		{
+			tempStats.agility = agi;
+			++availablePoints;
+		}
+
+		if (vit < tempStats.vitality)
+		{
+			tempStats.vitality = vit;
+			++availablePoints;
+		}
+
+		if (ImGui::Button("Apply Changes"))
+		{
+			app->m_agent->getStats() = tempStats;
+		}
+
+	}
+	else if (availablePoints > 0)
+	{
+		pointsAvailable = true;
 	}
 
 	ImGui::End();

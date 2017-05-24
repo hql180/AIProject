@@ -8,11 +8,11 @@ public:
 	UI();
 	~UI();
 
-	static void run(bool* open, Agent* agent, AIApplication* app);
+	static void run(bool* open, AIApplication* app);
 
 	static void showHelp();
 
-	static void showUI(bool* open, Agent* agent, AIApplication* app);
+	static void showUI(bool* open, AIApplication* app);
 
 	static void showMenu();
 

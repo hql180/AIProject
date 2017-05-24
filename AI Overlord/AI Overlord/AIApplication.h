@@ -23,7 +23,7 @@ public:
 	virtual void update(float dt);
 	virtual void draw();
 
-private:
+
 	Camera m_camera;
 	glm::mat4 m_projectionMatrix;
 	glm::mat4 m_viewMatrix;
