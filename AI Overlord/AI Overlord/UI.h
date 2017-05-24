@@ -14,9 +14,8 @@ public:
 
 	static void showUI(bool* open, AIApplication* app);
 
+	static void showHealthStatus(bool* open, AIApplication* app);
+
 	static void showMenu();
-
-	
-
 };
 

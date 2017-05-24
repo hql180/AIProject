@@ -32,6 +32,8 @@ public:
 
 	PathGraph* m_pathGraph;
 
+	bool m_start;
+
 	std::vector<Obstacle> m_obstacles;
 	std::vector<Fountain> m_fountains;
 	

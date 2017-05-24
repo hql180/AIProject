@@ -44,6 +44,8 @@ AIApplication::~AIApplication()
 
 bool AIApplication::startup()
 {
+	m_start = false;
+
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
 
 	// initialise gizmo primitive counts
@@ -189,46 +191,49 @@ void AIApplication::update(float dt)
 		
 	static bool show = true;
 
-
 	UI::run(&show, this);
 
-
-
-	Gizmos::clear();
-	vec4 white(1);
-	vec4 green(0, 1, 0, 1);
-	vec4 black(0, 0, 0, 1);
-
-	float speed = 2.5f;
-
-	for (auto& fountain : m_fountains)
-	{
-		fountain.update(m_agents, dt);
-	}
-
-	for (auto& obstacle : m_obstacles)
-	{
-		glm::vec3 pos = obstacle.position;
-		pos.y += obstacle.radius;
-		Gizmos::addAABB(pos, obstacle.extent, vec4(0.9f));
-	}
-
-	for (int i = 0; i < m_agents.size(); ++i)
-	{
-		m_agents[i]->update(m_agents, dt);
-	}
-	
 	
 
-	//for (auto& node : m_pathGraph->getNodeList())
-	//{
-	//	Gizmos::addSphere(node->position, 0.1f, 1, 1, white);
-	//	for (auto& edgeConnection : node->connections)
-	//	{
-	//		Gizmos::addLine(node->position, edgeConnection.connectedNode->position, black);
-	//	}
-	//}
+	if (m_start)
+	{
+		UI::showHealthStatus(&m_start, this);
 
+		Gizmos::clear();
+		vec4 white(1);
+		vec4 green(0, 1, 0, 1);
+		vec4 black(0, 0, 0, 1);
+
+		float speed = 2.5f;
+
+		for (auto& fountain : m_fountains)
+		{
+			fountain.update(m_agents, dt);
+		}
+
+		for (auto& obstacle : m_obstacles)
+		{
+			glm::vec3 pos = obstacle.position;
+			pos.y += obstacle.radius;
+			Gizmos::addAABB(pos, obstacle.extent, vec4(0.9f));
+		}
+
+		for (int i = 0; i < m_agents.size(); ++i)
+		{
+			m_agents[i]->update(m_agents, dt);
+		}
+
+
+
+		//for (auto& node : m_pathGraph->getNodeList())
+		//{
+		//	Gizmos::addSphere(node->position, 0.1f, 1, 1, white);
+		//	for (auto& edgeConnection : node->connections)
+		//	{
+		//		Gizmos::addLine(node->position, edgeConnection.connectedNode->position, black);
+		//	}
+		//}
+	}
 
 
 }
