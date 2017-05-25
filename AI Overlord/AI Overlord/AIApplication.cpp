@@ -88,9 +88,6 @@ bool AIApplication::startup()
 
 	m_pathGraph->removeNodeAt(m_fountains.back().position, m_fountains.back().radius);
 
-	//m_fountains.push_back(Fountain(vec3(3, 0, 6)));
-
-	//m_pathGraph->removeNodeAt(m_fountains.back().position, m_fountains.back().radius);
 
 	for (auto& node : m_pathGraph->getNodeList())
 	{
@@ -111,6 +108,8 @@ bool AIApplication::startup()
 
 	m_agents.back()->setUp(Stats());
 
+	m_agents.back()->setStatPoints(10);
+
 	m_agents.back()->getActions().push_back(new Wander());
 
 	m_agents.back()->getActions().push_back(new Flee());
@@ -118,30 +117,6 @@ bool AIApplication::startup()
 	m_agents.back()->getActions().push_back(new Heal());
 
 	m_agents.back()->getActions().push_back(new GoToFountain());
-
-	m_agents.back()->getTActions().push_back(new BasicMelee());
-
-	//m_agents.back()->getTActions().push_back(new BasicMagic());
-
-	m_agents.back()->getTActions().push_back(new Charge());
-
-	m_agents.back()->getTActions().push_back(new StrongMelee());
-
-
-
-	//m_agents.push_back(new Agent(vec3(8, 0, 6), m_pathGraph, vec4(0, 1, 0, 1), vec3(-1, 0, 0)));
-
-	//m_agents.back()->setObstacle(&m_obstacles);
-
-	////m_agents.back()->getActions().push_back(new Wander());
-
-	//m_agents.back()->getActions().push_back(new Flee());
-
-	//m_agents.back()->getTActions().push_back(new BasicMelee());
-
-	//m_agents.back()->getTActions().push_back(new BasicMagic());
-
-	//m_agents.back()->getTActions().push_back(new BasicRange());
 
 	for (int i = 1; i <= 2; ++i)
 	{		
@@ -182,6 +157,8 @@ void AIApplication::shutdown()
 		delete m_pathGraph;
 }
 
+static bool show = true;
+
 void AIApplication::update(float dt)
 {
 	if (dt > 1.f)
@@ -189,11 +166,9 @@ void AIApplication::update(float dt)
 
 	m_camera.update();
 		
-	static bool show = true;
 
-	UI::run(&show, this);
-
-	
+	if (!m_start)
+		UI::run(show, this);
 
 	if (m_start)
 	{
@@ -223,16 +198,6 @@ void AIApplication::update(float dt)
 			m_agents[i]->update(m_agents, dt);
 		}
 
-
-
-		//for (auto& node : m_pathGraph->getNodeList())
-		//{
-		//	Gizmos::addSphere(node->position, 0.1f, 1, 1, white);
-		//	for (auto& edgeConnection : node->connections)
-		//	{
-		//		Gizmos::addLine(node->position, edgeConnection.connectedNode->position, black);
-		//	}
-		//}
 	}
 
 
@@ -251,4 +216,75 @@ void AIApplication::draw()
 
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 
+}
+
+void AIApplication::applySkillSet(Agent * agent, int setID)
+{
+	switch (setID)
+	{
+	case 1:
+		if (agent->getTActions().size() > 0)
+		{
+			for (int i = agent->getTActions().size() - 1; i >= 0; --i)
+			{
+				delete agent->getTActions()[i];				
+			}
+		}
+		agent->getTActions().clear();
+		agent->getTActions().push_back(new BasicMelee());
+		agent->getTActions().push_back(new Charge());
+		agent->getTActions().push_back(new StrongMelee());
+		break;
+	case 2:
+		if (agent->getTActions().size() > 0)
+		{
+			for (int i = agent->getTActions().size() - 1; i >= 0; --i)
+			{
+				delete agent->getTActions()[i];
+			}
+		}
+		agent->getTActions().clear();
+		agent->getTActions().push_back(new BasicRange());
+		agent->getTActions().push_back(new Snipe());
+		break;
+	case 3:
+		if (agent->getTActions().size() > 0)
+		{
+			for (int i = agent->getTActions().size() - 1; i >= 0; --i)
+			{
+				delete agent->getTActions()[i];
+			}
+		}
+		agent->getTActions().clear();
+		agent->getTActions().push_back(new BasicMagic());
+		agent->getTActions().push_back(new MagicBomb());
+		break;
+
+	default:
+		if (agent->getTActions().size() > 0)
+		{
+			for (int i = agent->getTActions().size() - 1; i >= 0; --i)
+			{
+				delete agent->getTActions()[i];
+			}
+		}
+		agent->getTActions().clear();
+		break;
+	}
+}
+
+void AIApplication::restart()
+{
+	delete m_pathGraph;
+
+	for (int i = m_agents.size() - 1; i >= 0; --i)
+	{
+		delete m_agents[i];
+	}
+
+	show = false;
+
+	m_agents.clear();
+
+	startup();
 }

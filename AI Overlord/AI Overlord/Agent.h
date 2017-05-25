@@ -123,12 +123,20 @@ public:
 
 	std::vector<Fountain>* getFountains();
 
+	int getStatPoints();
+
+	void setStatPoints(int value);
+
+	void updateStats();
+
 protected:
 	glm::vec3 m_postion;
 	glm::vec3 m_velocity;
 	glm::vec3 m_dir;
 	glm::vec4 m_colour;
 	Stats m_stats;
+
+	int m_statPoints;
 
 	float m_radius;
 

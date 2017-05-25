@@ -6,7 +6,7 @@
 StrongMelee::StrongMelee()
 {
 	m_cost = 20.f;
-	m_attackRange = 1.2f;
+	m_attackRange = 1.f;
 	m_damageMultiplier = 5.5f;
 	m_CD = 5.5f;
 	m_CDTimer = 0;
@@ -22,12 +22,20 @@ StrongMelee::~StrongMelee()
 
 float StrongMelee::evaluate(Agent * agent, float dt)
 {
-	float score = 0;
+	if (checkMana(agent) == 0 || checkCoolDown(agent) == 0)
+	{
+		return 0;
+	}
+	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
 
-	score += checkDamage(agent) * agent->getHealthPercentage()* checkMana(agent) * checkCoolDown(agent);
+	if (score > 1)
+		score = 1.f;
 
-	if (glm::length(agent->getPostion() - agent->getTarget()->getPostion()) > m_attackRange)
-		score /= 3.f;
+	score += agent->getHealthPercentage();
+
+	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
+
+	score = score - (glm::length(agent->getPostion() - agent->getTarget()->getPostion()) / agent->getVisionRange()) * 0.5f;
 
 	return score;
 }

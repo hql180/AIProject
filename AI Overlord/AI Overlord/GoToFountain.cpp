@@ -21,7 +21,6 @@ float GoToFountain::evaluate(Agent * agent, float dt)
 		{
 			score += 1.f;
 		}
-		//printf("go fountain score: %f \n", score); //Debug
 
 		return score;
 	}

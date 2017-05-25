@@ -28,9 +28,18 @@ BasicRange::~BasicRange()
 
 float BasicRange::evaluate(Agent * agent, float dt)
 {
-	float score = 0;
+	if (checkMana(agent) == 0 || checkCoolDown(agent) == 0)
+	{
+		return 0;
+	}
+	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
 
-	score += checkDamage(agent) * checkMana(agent) * checkCoolDown(agent);
+	if (score > 1)
+		score = 1.f;
+
+	score += agent->getHealthPercentage();
+
+	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
 
 	return score;
 }

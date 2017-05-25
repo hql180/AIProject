@@ -453,3 +453,18 @@ std::vector<Fountain>* Agent::getFountains()
 	return m_fountains;
 }
 
+int Agent::getStatPoints()
+{
+	return m_statPoints;
+}
+
+void Agent::setStatPoints(int value)
+{
+	m_statPoints = value;
+}
+
+void Agent::updateStats()
+{
+	setUp(m_stats, m_moveSpeed, m_preferedRange);
+}
+

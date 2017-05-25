@@ -23,6 +23,9 @@ public:
 	virtual void update(float dt);
 	virtual void draw();
 
+	void applySkillSet(Agent* agent, int setID);
+
+	void restart();
 
 	Camera m_camera;
 	glm::mat4 m_projectionMatrix;

@@ -14,101 +14,74 @@ UI::~UI()
 {
 }
 
-void UI::run(bool* open, AIApplication* app)
+void UI::run(bool& open, AIApplication* app)
 {
-	ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-	
+	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiSetCond_FirstUseEver);	
 	showUI(open, app);
 }
 
 void UI::showHelp()
 {
-	ImGui::BulletText("Double-click on title bar to collapse window.");
-	ImGui::BulletText("Click and drag on lower right corner to resize window.");
-	ImGui::BulletText("Click and drag on any empty space to move window.");
-	ImGui::BulletText("Mouse Wheel to scroll.");
-	if (ImGui::GetIO().FontAllowUserScaling)
-		ImGui::BulletText("CTRL+Mouse Wheel to zoom window contents.");
-	ImGui::BulletText("TAB/SHIFT+TAB to cycle through keyboard editable fields.");
-	ImGui::BulletText("CTRL+Click on a slider or drag box to input text.");
 	ImGui::BulletText(
-		"While editing text:\n"
-		"- Hold SHIFT or use mouse to select text\n"
-		"- CTRL+Left/Right to word jump\n"
-		"- CTRL+A or double-click to select all\n"
-		"- CTRL+X,CTRL+C,CTRL+V clipboard\n"
-		"- CTRL+Z,CTRL+Y undo/redo\n"
-		"- ESCAPE to revert\n"
-		"- You can apply arithmetic operators +,*,/ on numerical values.\n"
-		"  Use +- to subtract.\n");
+		"To start simulation:\n"
+		"- Allocate Character stats then apply\n"
+		"- Select Skillset then apply\n"
+		"- Press Start\n"
+		);
+	ImGui::BulletText(
+		"Stats:\n"
+		"- Strength: Increases damage and health\n"
+		"- Intelligence: Increases damage, mana pool, and reduces cool down of actions\n"
+		"- Agility: Increases damage and movement speed, and decreases cast time\n"
+		"- Vitality: Increases Health"
+		);
+	ImGui::BulletText(
+		"Camera Controls:\n"
+		"- WASD: To move forward, left, back and right\n"
+		"- QE: To move up and down y axis\n"
+		"- Hold mouse right click and move to adjust view angle\n"
+		);
 }
 
-void UI::showUI(bool * open, AIApplication* app)
+void UI::showUI(bool & open, AIApplication* app)
 {	
-	static bool show_menu = false;
-
-	static bool show_app_metrics = false;
-
-	static bool show_app_style_editor = false;
-
-	static bool show_app_about = false;
-
-	if (show_menu) showMenu();
-
-	static bool no_titlebar = false;
-	static bool no_border = true;
-	static bool no_resize = false;
-	static bool no_move = false;
-	static bool no_scrollbar = false;
-	static bool no_collapse = false;
-	static bool no_menu = false;
-
 	ImGuiWindowFlags window_flags = 0;
-	if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
-	if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
-	if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
-	if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
-	if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
-	if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
-	if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
-	ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiSetCond_FirstUseEver);
-	
-	if (!ImGui::Begin("Main", open, window_flags))
+	window_flags |= ImGuiWindowFlags_ShowBorders;
+	window_flags |= ImGuiWindowFlags_MenuBar;
+	window_flags |= ImGuiWindowFlags_NoSavedSettings;
+
+	ImGui::SetNextWindowSize(ImVec2(550, 680));	
+
+	if (!ImGui::Begin("Main", &open, window_flags))
 	{
 		ImGui::End();
 		return;
 	}
-
-	if (ImGui::BeginMenuBar())
-	{
-		if (ImGui::BeginMenu("Menu"))
-		{
-			showMenu();
-			ImGui::EndMenu();
-		}
-
-		ImGui::EndMenuBar();
-	}
-
+	
 	if (ImGui::CollapsingHeader("Help"))
 	{
+		ImGui::SetWindowSize(ImVec2( 400, 0));
 		showHelp();
 	}
+	
+	static bool pointsAvailable = false;
 
 	if (ImGui::CollapsingHeader("Character"))
 	{
-		static bool pointsAvailable = true;
-		static int availablePoints = 5;
 
-		if (ImGui::CollapsingHeader("Character Stats"))
+		static int availablePoints = 0;
+		static int selected_skillSet = 0;
+
+		ImGui::BeginChild("Character Details", ImVec2(0, 250.f));
+
+		if (ImGui::CollapsingHeader("Stats"))
 		{
-
 			static Stats tempStats;
-
+			
 			if (pointsAvailable)
 			{
 				tempStats = app->m_agent->getStats();
-				availablePoints = 5;
+				availablePoints = app->m_agent->getStatPoints();
 				pointsAvailable = false;
 			}
 			float str = tempStats.strength;
@@ -187,20 +160,83 @@ void UI::showUI(bool * open, AIApplication* app)
 			if (ImGui::Button("Apply"))
 			{
 				app->m_agent->getStats() = tempStats;
+				app->m_agent->setStatPoints(availablePoints);
+				if (!app->m_start)
+				{
+					app->m_agent->updateStats();
+				}
+			}
+
+		}
+		else if (app->m_agent->getStatPoints() > 0)
+		{
+			pointsAvailable = true;
+		}
+
+		if (ImGui::CollapsingHeader("Skills"))
+		{
+			const char* names[] = { "None", "Melee", "Range", "Magic" };
+
+			// Simple selection popup
+			// (If you want to show the current selection inside the Button itself, you may want to build a string using the "###" operator to preserve a constant ID with a variable label)
+			if (ImGui::Button("Skill Sets"))
+				ImGui::OpenPopup("select");
+			ImGui::SameLine();
+			ImGui::Text(names[selected_skillSet]);
+			if (ImGui::BeginPopup("select"))
+			{
+				ImGui::Text("Skill Sets");
+				ImGui::Separator();
+				for (int i = 0; i < 4; i++)
+					if (ImGui::Selectable(names[i]))
+						selected_skillSet = i;
+				ImGui::EndPopup();
+			}
+
+			if(ImGui::Button("Apply Skill Set"))
+			{
+				app->applySkillSet(app->m_agent, selected_skillSet);
 			}
 		}
-		else if (availablePoints > 0)
+
+		ImGui::EndChild();
+	}	
+
+
+
+	if(ImGui::Button("Start"))
+	{
+		if (app->m_agent->getStatPoints() > 0)
 		{
+			ImGui::OpenPopup("Allocate stat points");
+		}
+		else if (app->m_agent->getTActions().size() == 0)
+		{
+			ImGui::OpenPopup("Select skill set");
+		}
+		else
+		{
+			app->m_start = true;
+			open = false;
 			pointsAvailable = true;
 		}
 	}
 
-	if(ImGui::Button("Start"))
+	if (ImGui::BeginPopupModal("Allocate stat points"))
 	{
-		app->m_start = true;
+		ImGui::Text("Allocate stat points!\n\n");
+		if (ImGui::Button("Close"))
+			ImGui::CloseCurrentPopup();
+		ImGui::EndPopup();
 	}
 
-
+	if (ImGui::BeginPopupModal("Select skill set"))
+	{
+		ImGui::Text("Select skill set!\n\n");
+		if (ImGui::Button("Close"))
+			ImGui::CloseCurrentPopup();
+		ImGui::EndPopup();
+	}
 
 	ImGui::End();
 }
@@ -209,64 +245,23 @@ void UI::showHealthStatus(bool * open, AIApplication * app)
 {
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
+	ImGui::SetWindowPos(ImVec2(10, 10));
 	ImGui::SetNextWindowSize(ImVec2(200, 100));
 	ImGui::Begin("Health Status", &app->m_start, window_flags);
-	ImGui::ProgressBar(app->m_agent->getHealthPercentage(), ImVec2(-1, 0), "Health");
-	ImGui::ProgressBar(app->m_agent->getManaPercentage(), ImVec2(-1, 0), "Mana");
+	char healthbuf[32];
+	sprintf(healthbuf, "%d", (int)app->m_agent->getCurrentHealth());
+	ImGui::Text("Health");
+	ImGui::SameLine();
+	ImGui::ProgressBar(app->m_agent->getHealthPercentage(), ImVec2(-1, 0), healthbuf);
+	char manabuf[32];
+	sprintf(manabuf, "%d", (int)app->m_agent->getCurrentMana());
+	ImGui::Text("Mana");
+	ImGui::SameLine();
+	ImGui::ProgressBar(app->m_agent->getManaPercentage(), ImVec2(-1, 0), manabuf);
+	if (ImGui::Button("Restart"))
+	{
+		app->restart();
+	}
 	ImGui::End();
 }
 
-void UI::showMenu()
-{
-	ImGui::MenuItem("(dummy menu)", NULL, false, false);
-	if (ImGui::MenuItem("New")) {}
-	if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-	if (ImGui::BeginMenu("Open Recent"))
-	{
-		ImGui::MenuItem("fish_hat.c");
-		ImGui::MenuItem("fish_hat.inl");
-		ImGui::MenuItem("fish_hat.h");
-		if (ImGui::BeginMenu("More.."))
-		{
-			ImGui::MenuItem("Hello");
-			ImGui::MenuItem("Sailor");
-			if (ImGui::BeginMenu("Recurse.."))
-			{
-				showMenu();
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenu();
-	}
-	if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-	if (ImGui::MenuItem("Save As..")) {}
-	ImGui::Separator();
-	if (ImGui::BeginMenu("Options"))
-	{
-		static bool enabled = true;
-		ImGui::MenuItem("Enabled", "", &enabled);
-		ImGui::BeginChild("child", ImVec2(0, 60), true);
-		for (int i = 0; i < 10; i++)
-			ImGui::Text("Scrolling Text %d", i);
-		ImGui::EndChild();
-		static float f = 0.5f;
-		static int n = 0;
-		ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
-		ImGui::InputFloat("Input", &f, 0.1f);
-		ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
-		ImGui::EndMenu();
-	}
-	if (ImGui::BeginMenu("Colors"))
-	{
-		for (int i = 0; i < ImGuiCol_COUNT; i++)
-			ImGui::MenuItem(ImGui::GetStyleColName((ImGuiCol)i));
-		ImGui::EndMenu();
-	}
-	if (ImGui::BeginMenu("Disabled", false)) // Disabled
-	{
-		IM_ASSERT(0);
-	}
-	if (ImGui::MenuItem("Checked", NULL, true)) {}
-	if (ImGui::MenuItem("Quit", "Alt+F4")) {}
-}

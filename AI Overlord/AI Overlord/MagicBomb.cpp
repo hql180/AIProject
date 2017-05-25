@@ -30,9 +30,19 @@ MagicBomb::~MagicBomb()
 float MagicBomb::evaluate(Agent * agent, float dt)
 {
 	m_damageMultiplier = m_baseDamage;
-	float score = 0;
 
-	score += checkDamage(agent) * checkMana(agent) * checkCoolDown(agent);
+	if (checkMana(agent) == 0 || checkCoolDown(agent) == 0)
+	{
+		return 0;
+	}
+	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
+
+	if (score > 1)
+		score = 1.f;
+
+	score += agent->getHealthPercentage();
+
+	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
 
 	return score;
 }

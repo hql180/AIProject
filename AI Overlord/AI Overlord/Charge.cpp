@@ -24,9 +24,19 @@ float Charge::evaluate(Agent * agent, float dt)
 	if (glm::length(agent->getPostion() - agent->getTarget()->getPostion()) < 2.f)
 		return 0;
 
-	float score = 0;
+	if (checkMana(agent) == 0 || checkCoolDown(agent) == 0)
+	{
+		return 0;
+	}
 
-	score += checkDamage(agent) * agent->getHealthPercentage() * checkMana(agent) * checkCoolDown(agent);
+	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
+
+	if (score > 1)
+		score = 1.f;
+
+	score += agent->getHealthPercentage();
+
+	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
 
 	return score;
 }

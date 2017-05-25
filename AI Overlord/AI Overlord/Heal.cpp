@@ -29,7 +29,7 @@ float Heal::evaluate(Agent * agent, float dt)
 	}
 	for (auto& hostile : agent->getHostiles())
 	{
-		if (glm::length(agent->getPostion() - hostile->getPostion()) < m_attackRange)
+		if (glm::length(agent->getPostion() - hostile->getPostion()) < agent->getVisionRange())
 		{
 			return 0.f;
 		}

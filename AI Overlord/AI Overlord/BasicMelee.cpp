@@ -31,8 +31,6 @@ float BasicMelee::evaluate(Agent* agent, float dt)
 	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
 
 	score = score - (glm::length(agent->getPostion() - agent->getTarget()->getPostion()) / agent->getVisionRange()) * 0.5f;
-		
-	// *checkMana(agent) * checkCoolDown(agent);
 
 	return score;
 }

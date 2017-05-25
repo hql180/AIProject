@@ -149,9 +149,6 @@
     <ClCompile Include="Flee.cpp">
       <Filter>Source Files\Actions</Filter>
     </ClCompile>
-    <ClCompile Include="Charge.cpp">
-      <Filter>Source Files\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="Heal.cpp">
       <Filter>Source Files\Actions</Filter>
     </ClCompile>
@@ -170,8 +167,11 @@
     <ClCompile Include="Snipe.cpp">
       <Filter>Source Files\Actions\Attacks</Filter>
     </ClCompile>
+    <ClCompile Include="Charge.cpp">
+      <Filter>Source Files\Actions\Attacks</Filter>
+    </ClCompile>
     <ClCompile Include="MagicBomb.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Actions\Attacks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

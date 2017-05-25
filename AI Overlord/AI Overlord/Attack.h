@@ -37,8 +37,6 @@ protected:
 	float m_castTimer;
 	bool m_isCasting;
 
-	//Action* 
-
 	float checkCoolDown(Agent* agent);
 	float checkMana(Agent* agent);
 	float checkDamage(Agent* agent);

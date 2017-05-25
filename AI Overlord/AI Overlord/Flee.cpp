@@ -41,8 +41,6 @@ float Flee::evaluate(Agent * agent, float dt)
 		return 0;
 	}
 
-	//printf("flee score: %f \n", score * (m_corneredCounter / 9.f)); //Debug
-	printf("%f \n", score * (m_corneredCounter / 30.f));
 	return (score * (m_corneredCounter / 30.f));
 }
 
@@ -52,7 +50,6 @@ void Flee::enter(Agent * agent, float dt)
 
 	for (auto& hostile : agent->getHostiles())
 	{
-		//destination = destination + (agent->getDirectionToTarget(hostile, agent) * (agent->getVisionRange() - glm::length(agent->getPostion() - hostile->getPostion())));
 		destination = destination + (agent->getDirectionToTarget(hostile, agent) * (agent->getVisionRange() / 2.f));
 	}
 
