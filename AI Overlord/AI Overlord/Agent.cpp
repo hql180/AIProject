@@ -20,6 +20,8 @@ Agent::Agent() : m_currentTarget(nullptr), m_currentAction(nullptr)
 Agent::Agent(glm::vec3& pos, PathGraph* graph, std::vector<Obstacle>* obstacles, std::vector<Fountain>* fountains, glm::vec4& colour, float FOV, float visionRange, float radius, glm::vec3& forwardDir)
 	: m_postion(pos), m_velocity(0), m_dir(forwardDir), m_colour(colour)
 {
+	player = false;
+
 	m_pathGraph = graph;
 
 	m_obstacles = obstacles;
@@ -216,7 +218,7 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 
 	for (int i = m_actionableHostiles.size() - 1; i >= 0; --i)
 	{
-		if (!inVisionRange(m_actionableHostiles[i])) // || !inLineOfSight(m_actionableHostiles[i])
+		if (!inVisionRange(m_actionableHostiles[i]))
 		{
 			if (m_actionableHostiles[i] == m_currentTarget)
 				m_currentTarget == nullptr;
@@ -224,14 +226,17 @@ void Agent::update(std::vector<Agent*> agentList, float dt)
 		}
 	}
 
-	glm::vec3 vision = m_dir * m_visionRange;
-	aie::Gizmos::addLine(m_postion, vision + m_postion, m_colour);
-	aie::Gizmos::addLine(m_postion, glm::vec3(vision.x * cosf(m_FOV) + vision.z * sinf(m_FOV), 0, -vision.x * sinf(m_FOV) + vision.z * cosf(m_FOV)) + m_postion, m_colour);
-	aie::Gizmos::addLine(m_postion, glm::vec3(vision.x * cosf(-m_FOV) + vision.z * sinf(-m_FOV), 0, -vision.x * sinf(-m_FOV) + vision.z * cosf(-m_FOV)) + m_postion, m_colour);
+	if (player)
+	{
+		glm::vec3 vision = m_dir * m_visionRange;
+		aie::Gizmos::addLine(m_postion, vision + m_postion, m_colour);
+		aie::Gizmos::addLine(m_postion, glm::vec3(vision.x * cosf(m_FOV) + vision.z * sinf(m_FOV), 0, -vision.x * sinf(m_FOV) + vision.z * cosf(m_FOV)) + m_postion, m_colour);
+		aie::Gizmos::addLine(m_postion, glm::vec3(vision.x * cosf(-m_FOV) + vision.z * sinf(-m_FOV), 0, -vision.x * sinf(-m_FOV) + vision.z * cosf(-m_FOV)) + m_postion, m_colour);
+
+	}
+
 	aie::Gizmos::addAABB(m_postion, glm::vec3(m_radius), m_colour);
-	//aie::Gizmos::addCapsule(m_postion, m_radius, m_radius * 2, 20, 20, m_colour);
-
-
+	
 	m_currentAction = getBestAction(dt);
 
 	for (auto& action : m_targetedActions)

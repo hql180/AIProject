@@ -129,6 +129,8 @@ public:
 
 	void updateStats();
 
+	bool player;
+
 protected:
 	glm::vec3 m_postion;
 	glm::vec3 m_velocity;

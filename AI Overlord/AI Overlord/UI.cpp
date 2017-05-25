@@ -245,7 +245,7 @@ void UI::showHealthStatus(bool * open, AIApplication * app)
 {
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
-	ImGui::SetWindowPos(ImVec2(10, 10));
+	ImGui::SetWindowPos(ImVec2(10, 500));
 	ImGui::SetNextWindowSize(ImVec2(200, 100));
 	ImGui::Begin("Health Status", &app->m_start, window_flags);
 	char healthbuf[32];

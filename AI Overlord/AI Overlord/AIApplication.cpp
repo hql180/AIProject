@@ -64,7 +64,7 @@ bool AIApplication::startup()
 		}
 	}
 
-	for (int x = 0; x < 10; ++x)
+	for (int x = 0; x < 20; ++x)
 	{
 		m_obstacles.push_back(Obstacle());
 		m_obstacles.back().position = vec3(dis2(gen2), 0, dis2(gen2));
@@ -88,6 +88,21 @@ bool AIApplication::startup()
 
 	m_pathGraph->removeNodeAt(m_fountains.back().position, m_fountains.back().radius);
 
+	m_fountains.push_back(Fountain(vec3(size / 4, 0,  size - size /4)));
+
+	m_pathGraph->removeNodeAt(m_fountains.back().position, m_fountains.back().radius);
+
+	m_fountains.push_back(Fountain(vec3(size / 4, 0, size / 4)));
+
+	m_pathGraph->removeNodeAt(m_fountains.back().position, m_fountains.back().radius);
+
+	m_fountains.push_back(Fountain(vec3(size - size / 4, 0, size - size / 4)));
+
+	m_pathGraph->removeNodeAt(m_fountains.back().position, m_fountains.back().radius);
+
+	m_fountains.push_back(Fountain(vec3(size - size / 4, 0, size / 4)));
+
+	m_pathGraph->removeNodeAt(m_fountains.back().position, m_fountains.back().radius);
 
 	for (auto& node : m_pathGraph->getNodeList())
 	{
@@ -110,6 +125,8 @@ bool AIApplication::startup()
 
 	m_agents.back()->setStatPoints(10);
 
+	m_agents.back()->player = true;
+
 	m_agents.back()->getActions().push_back(new Wander());
 
 	m_agents.back()->getActions().push_back(new Flee());
@@ -118,9 +135,9 @@ bool AIApplication::startup()
 
 	m_agents.back()->getActions().push_back(new GoToFountain());
 
-	for (int i = 1; i <= 2; ++i)
+	for (int i = 1; i <= 3; ++i)
 	{		
-		m_agents.push_back(new Agent(vec3(i % 3 , 0, i % 7), m_pathGraph, &m_obstacles, &m_fountains, vec4(i % 1 / 5.f, i % 2 / 5.f, i % 3 / 5.f, 1)));
+		m_agents.push_back(new Agent(vec3(dis2(gen2), 0, dis2(gen2)), m_pathGraph, &m_obstacles, &m_fountains, vec4(i % 1 / 5.f, i % 2 / 5.f, i % 3 / 5.f, 1)));
 
 		m_agents.back()->setUp(Stats(), 1, 6.f);
 
@@ -131,17 +148,41 @@ bool AIApplication::startup()
 		m_agents.back()->getActions().push_back(new Heal());
 
 		m_agents.back()->getActions().push_back(new GoToFountain());
-		if (i == 1)
-		{
-			m_agents.back()->getTActions().push_back(new BasicMagic());
-			m_agents.back()->getTActions().push_back(new MagicBomb());
-		}
-		else
-		{
-			m_agents.back()->getTActions().push_back(new BasicRange());
-			m_agents.back()->getTActions().push_back(new Snipe());
-		}
 
+		m_agents.back()->getTActions().push_back(new BasicMagic());
+		m_agents.back()->getTActions().push_back(new MagicBomb());
+
+		m_agents.push_back(new Agent(vec3(dis2(gen2), 0, dis2(gen2)), m_pathGraph, &m_obstacles, &m_fountains, vec4(i % 1 / 5.f, i % 2 / 5.f, i % 3 / 5.f, 1)));
+
+		m_agents.back()->setUp(Stats(), 1, 6.f);
+
+		m_agents.back()->getActions().push_back(new Wander());
+
+		m_agents.back()->getActions().push_back(new Flee());
+
+		m_agents.back()->getActions().push_back(new Heal());
+
+		m_agents.back()->getActions().push_back(new GoToFountain());
+
+		m_agents.back()->getTActions().push_back(new BasicRange());
+		m_agents.back()->getTActions().push_back(new Snipe());
+
+		m_agents.push_back(new Agent(vec3(dis2(gen2), 0, dis2(gen2)), m_pathGraph, &m_obstacles, &m_fountains, vec4(i % 1 / 5.f, i % 2 / 5.f, i % 3 / 5.f, 1)));
+
+		m_agents.back()->setUp(Stats(), 1, 6.f);
+
+		m_agents.back()->getActions().push_back(new Wander());
+
+		m_agents.back()->getActions().push_back(new Flee());
+
+		m_agents.back()->getActions().push_back(new Heal());
+
+		m_agents.back()->getActions().push_back(new GoToFountain());
+
+		m_agents.back()->getTActions().push_back(new Charge());
+		m_agents.back()->getTActions().push_back(new BasicMelee());
+		m_agents.back()->getTActions().push_back(new StrongMelee());
+		
 	}
 
 	m_camera = Camera(vec3(size/2, size / 3, size * 1.5f), -90);
