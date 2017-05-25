@@ -13,6 +13,7 @@ public:
 	virtual void updateAction(Agent* agent, float dt) = 0;
 	virtual void updateTimer(float dt);
 
+	char *name;
 protected:
 	void generatePath(Agent* agent, glm::vec3& destination);
 

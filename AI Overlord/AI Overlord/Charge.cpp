@@ -4,6 +4,7 @@
 
 Charge::Charge()
 {
+	name = "Charge";
 	m_cost = 5.f;
 	m_attackRange = 7.f;
 	m_damageMultiplier = 3.0f;
@@ -21,22 +22,21 @@ Charge::~Charge()
 
 float Charge::evaluate(Agent * agent, float dt)
 {
-	if (glm::length(agent->getPostion() - agent->getTarget()->getPostion()) < 2.f)
+	if (glm::length(agent->getPostion() - agent->getETarget()->getPostion()) < 2.f)
 		return 0;
 
 	if (checkMana(agent) == 0 || checkCoolDown(agent) == 0)
 	{
 		return 0;
 	}
-
-	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
+	float score = checkDamage(agent) / agent->getETarget()->getCurrentHealth();
 
 	if (score > 1)
 		score = 1.f;
 
 	score += agent->getHealthPercentage();
 
-	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
+	score = score + (agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() : 1.f;
 
 	return score;
 }

@@ -4,6 +4,7 @@
 
 Heal::Heal()
 {
+	name = " ";
 	m_cost = 20.f;
 	m_attackRange = 9.5f;
 	m_damageMultiplier = 1.f;

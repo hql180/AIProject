@@ -4,6 +4,7 @@
 
 GoToFountain::GoToFountain()
 {
+	name = " ";
 }
 
 

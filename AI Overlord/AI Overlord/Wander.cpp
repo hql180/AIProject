@@ -9,6 +9,7 @@ std::uniform_real_distribution<float> dis(-5.0f, 5.0f);
 
 Wander::Wander() : m_helper(0)
 {
+	name = " ";
 }
 
 

@@ -246,7 +246,7 @@ void UI::showHealthStatus(bool * open, AIApplication * app)
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoResize;
 	ImGui::SetWindowPos(ImVec2(10, 500));
-	ImGui::SetNextWindowSize(ImVec2(200, 100));
+	ImGui::SetNextWindowSize(ImVec2(250, 200));
 	ImGui::Begin("Health Status", &app->m_start, window_flags);
 	char healthbuf[32];
 	sprintf(healthbuf, "%d", (int)app->m_agent->getCurrentHealth());
@@ -258,6 +258,12 @@ void UI::showHealthStatus(bool * open, AIApplication * app)
 	ImGui::Text("Mana");
 	ImGui::SameLine();
 	ImGui::ProgressBar(app->m_agent->getManaPercentage(), ImVec2(-1, 0), manabuf);
+	if (app->m_agent->getCurrentAction() != nullptr && (app->m_agent->getCurrentAction()->name != nullptr))
+	{
+		char buf[32];
+		sprintf(buf, "%s", app->m_agent->getCurrentAction()->name);
+		ImGui::Text(buf);
+	}
 	if (ImGui::Button("Restart"))
 	{
 		app->restart();

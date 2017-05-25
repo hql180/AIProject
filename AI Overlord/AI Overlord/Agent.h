@@ -131,6 +131,10 @@ public:
 
 	bool player;
 
+	float m_currentActionScore;
+
+	Agent* getETarget();
+
 protected:
 	glm::vec3 m_postion;
 	glm::vec3 m_velocity;
@@ -158,9 +162,9 @@ protected:
 
 	Agent* m_currentTarget;
 
-	Action* m_currentAction;
+	Agent* m_evaluationTarget;
 
-	float m_currentActionScore;
+	Action* m_currentAction;
 
 	PathGraph* m_pathGraph;
 

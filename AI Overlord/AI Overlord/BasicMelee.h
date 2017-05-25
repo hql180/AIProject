@@ -14,5 +14,7 @@ public:
 	virtual void exit(Agent* agent, float dt);
 	virtual void updateAction(Agent* agent, float dt);
 	virtual void updateTimer(float dt);
+
 };
+
 

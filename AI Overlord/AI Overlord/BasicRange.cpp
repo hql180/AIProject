@@ -5,6 +5,7 @@
 
 BasicRange::BasicRange()
 {
+	name = " ";
 	m_cost = 0;
 	m_attackRange = 8.f;
 	m_damageMultiplier = 1.5f;
@@ -32,14 +33,14 @@ float BasicRange::evaluate(Agent * agent, float dt)
 	{
 		return 0;
 	}
-	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
+	float score = checkDamage(agent) / agent->getETarget()->getCurrentHealth();
 
 	if (score > 1)
 		score = 1.f;
 
 	score += agent->getHealthPercentage();
 
-	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
+	score = score + (agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() : 1.f;
 
 	return score;
 }

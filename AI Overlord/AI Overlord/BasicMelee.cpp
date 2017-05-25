@@ -5,6 +5,7 @@
 
 BasicMelee::BasicMelee() 
 {
+	name = "Basic Melee";
 	m_cost = 0;
 	m_attackRange = 1.f;
 	m_damageMultiplier = 1.5f;
@@ -21,17 +22,20 @@ BasicMelee::~BasicMelee()
 
 float BasicMelee::evaluate(Agent* agent, float dt)
 {
-	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
+	//if (checkCoolDown(agent) == 0)
+	//	return 0;
+	
+	float score = checkDamage(agent) / agent->getETarget()->getCurrentHealth();
 
 	if (score > 1)
 		score = 1.f;
-	
+
 	score += agent->getHealthPercentage();
 
-	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
+	score = score + (agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() : 1.f;
 
-	score = score - (glm::length(agent->getPostion() - agent->getTarget()->getPostion()) / agent->getVisionRange()) * 0.5f;
-
+	score = score - (glm::length(agent->getPostion() - agent->getETarget()->getPostion()) / agent->getVisionRange()) * 0.5f;
+	
 	return score;
 }
 

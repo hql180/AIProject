@@ -5,6 +5,7 @@
 
 Flee::Flee() : m_corneredCounter(30.f)
 {
+	name = " ";
 }
 
 
@@ -65,8 +66,6 @@ void Flee::exit(Agent * agent, float dt)
 	{
 		m_corneredCounter -= 10.f;
 	}
-
-	printf("%f", m_corneredCounter);
 
 	agent->setCurrentAction(nullptr);
 }

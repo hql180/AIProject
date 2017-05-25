@@ -9,8 +9,6 @@
 class PathGraph;
 class Agent;
 
-
-
 class AIApplication : public aie::Application
 {
 public:

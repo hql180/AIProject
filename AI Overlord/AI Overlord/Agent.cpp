@@ -147,7 +147,7 @@ Action* Agent::getBestAction(float dt)
 	{		
 		if(inLineOfSight(target))
 		{
-			m_currentTarget = target;
+			m_evaluationTarget = target;
 			for (auto& action : m_targetedActions)
 			{
 				float score = action->evaluate(this, dt);
@@ -471,5 +471,10 @@ void Agent::setStatPoints(int value)
 void Agent::updateStats()
 {
 	setUp(m_stats, m_moveSpeed, m_preferedRange);
+}
+
+Agent * Agent::getETarget()
+{
+	return m_evaluationTarget;
 }
 

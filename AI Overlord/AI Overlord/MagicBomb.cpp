@@ -6,6 +6,7 @@
 
 MagicBomb::MagicBomb()
 {
+	name = " ";
 	m_cost = 25.f;
 	m_attackRange = 10.f;
 	m_baseDamage = 10.f;
@@ -35,14 +36,14 @@ float MagicBomb::evaluate(Agent * agent, float dt)
 	{
 		return 0;
 	}
-	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
+	float score = checkDamage(agent) / agent->getETarget()->getCurrentHealth();
 
 	if (score > 1)
 		score = 1.f;
 
 	score += agent->getHealthPercentage();
 
-	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
+	score = score + (agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() : 1.f;
 
 	return score;
 }

@@ -6,6 +6,7 @@
 
 Snipe::Snipe()
 {
+	name = " ";
 	m_cost = 20;
 	m_attackRange = 14.f;
 	m_damageMultiplier = 4.5f;
@@ -28,7 +29,7 @@ Snipe::~Snipe()
 
 float Snipe::evaluate(Agent * agent, float dt)
 {
-	float distance = glm::length(agent->getPostion() - agent->getTarget()->getPostion());
+	float distance = glm::length(agent->getPostion() - agent->getETarget()->getPostion());
 
 	if (distance > m_attackRange)
 		distance = m_attackRange;
@@ -41,14 +42,14 @@ float Snipe::evaluate(Agent * agent, float dt)
 	{
 		return 0;
 	}
-	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
+	float score = checkDamage(agent) / agent->getETarget()->getCurrentHealth();
 
 	if (score > 1)
 		score = 1.f;
 
 	score += agent->getHealthPercentage();
 
-	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
+	score = score + (agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() : 1.f;
 
 	return score;
 }

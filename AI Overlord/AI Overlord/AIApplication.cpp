@@ -123,7 +123,7 @@ bool AIApplication::startup()
 
 	m_agents.back()->setUp(Stats());
 
-	m_agents.back()->setStatPoints(10);
+	m_agents.back()->setStatPoints(0);
 
 	m_agents.back()->player = true;
 

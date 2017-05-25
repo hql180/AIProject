@@ -5,6 +5,8 @@
 
 StrongMelee::StrongMelee()
 {
+	
+	name = "Strong Melee";
 	m_cost = 20.f;
 	m_attackRange = 1.f;
 	m_damageMultiplier = 5.5f;
@@ -26,16 +28,16 @@ float StrongMelee::evaluate(Agent * agent, float dt)
 	{
 		return 0;
 	}
-	float score = checkDamage(agent) / agent->getTarget()->getCurrentHealth();
+	float score = checkDamage(agent) / agent->getETarget()->getCurrentHealth();
 
 	if (score > 1)
 		score = 1.f;
 
 	score += agent->getHealthPercentage();
 
-	score = score + (agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getTarget()->getHealthPercentage() : 1.f;
-
-	score = score - (glm::length(agent->getPostion() - agent->getTarget()->getPostion()) / agent->getVisionRange()) * 0.5f;
+	score = score + (agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() < 1) ? agent->getHealthPercentage() / agent->getETarget()->getHealthPercentage() : 1.f;
+	
+	score = score - (glm::length(agent->getPostion() - agent->getETarget()->getPostion()) / agent->getVisionRange()) * 0.5f;
 
 	return score;
 }
